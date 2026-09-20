@@ -1,0 +1,41 @@
+generated: '2026-09-19'
+method: generated
+source: openapi/_original/moirailabs-com-openapi.json (every operationId asserted against the spec at write time)
+  plus conventions/ and errors/; the provider publishes no skills, AGENTS.md or SKILL.md (moirailabs GitHub org
+  has 0 public repos; llms.txt lists none).
+skills:
+- file: moirailabs-com-register-contract.md
+  name: moirailabs-com-register-contract
+  method: generated
+  description: Register a smart contract for analytics indexing, wait for the indexer to catch up, and remove it
+    when done.
+  api: openapi/moirailabs-com-openapi.yml
+  operations:
+  - registerContract
+  - getContractStatus
+  - getUserContracts
+  - getContract
+  - deleteContract
+- file: moirailabs-com-async-analytics-invocation.md
+  name: moirailabs-com-async-analytics-invocation
+  method: generated
+  description: Run a durable analytics calculation with Idempotency-Key and Prefer negotiation, poll it safely,
+    fetch the stored result, and cancel if needed.
+  api: openapi/moirailabs-com-openapi.yml
+  operations:
+  - create
+  - status
+  - result
+  - cancel
+- file: moirailabs-com-cohort-and-method-report.md
+  name: moirailabs-com-cohort-and-method-report
+  method: generated
+  description: Produce a cohort retention and method-usage report for a registered contract from the synchronous
+    analytics endpoints and the daily reports.
+  api: openapi/moirailabs-com-openapi.yml
+  operations:
+  - getCohortAnalysis
+  - getMethodAnalysis
+  - getProductMetrics
+  - getReports
+  - getCohortTransactions

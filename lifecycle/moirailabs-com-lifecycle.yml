@@ -1,0 +1,64 @@
+generated: '2026-09-19'
+method: searched
+source: https://moirailabs.com/openapi.json; https://moirailabs.featurebase.app/en/changelog; https://moirailabs.featurebase.app/en/roadmap;
+  live probes 2026-09-19
+derived_from: openapi/_original/moirailabs-com-openapi.json
+versioning:
+  scheme: URI path prefix on the server URL (/api/v1)
+  current_version: v1
+  info_version: v0
+  spec_url: https://moirailabs.com/openapi.json
+  base_url: http://api.moirailabs.com/api/v1
+  policy_published: false
+  note: The contract is a springdoc auto-generated document (info.title "OpenAPI definition", info.version "v0",
+    server description "Generated server url") published from the marketing site rather than the API host. No written
+    versioning policy exists on any public page.
+deprecation:
+  policy_published: false
+  sunset_header: false
+  deprecation_header: false
+  rfc8594: false
+  deprecated_operations: []
+  note: 'Zero of 36 operations carry deprecated: true; no Sunset or Deprecation header is declared. Declared response
+    headers are X-Request-ID, Location and Retry-After only.'
+changelog:
+  url: https://moirailabs.featurebase.app/en/changelog
+  status: 200
+  entries: 0
+  note: A Featurebase changelog exists and reads "No changes published — Come back later to find what MoiraiLabs
+    has been working on". A surface with nothing on it; not credited as a change log.
+roadmap:
+  url: https://moirailabs.featurebase.app/en/roadmap
+  status: 200
+  note: Public Featurebase roadmap board with Backlog / Next up / In Progress / Done columns; linked from the site
+    footer.
+status_page:
+  url: null
+  probed:
+  - url: https://status.moirailabs.com
+    status: NXDOMAIN
+  - url: https://moirailabs.com/status
+    status: 200
+    note: SPA shell (13,623 bytes, the same body as every unknown route) — not a status page
+  note: No status page. The only live health signal is the anonymous GET https://api.moirailabs.com/api/v1/plans/active
+    (200 on 2026-09-19).
+sla:
+  published: false
+  note: Terms of Service section 7 provides the Services "as is"; no uptime target.
+sandbox:
+  published: false
+  note: No test host, test keys or test mode. The sitemap lists /auth and the SPA offers Google/GitHub sign-in through
+    Supabase; contract testing is done against production with a free-plan slot ("1 free contract").
+support:
+  help_center: https://moirailabs.featurebase.app/en/help
+  feedback: https://moirailabs.featurebase.app/en
+  email: hello@moirailabs.com
+  security_email: security@moirailabs.com
+  note: Help center is live but holds no articles as of 2026-09-19.
+legal_dates:
+  terms_effective: '2025-04-06'
+  privacy_updated: '2025-04-13'
+observed_contract_dates:
+  spec_examples: CohortsInvocationRequest example window 2026-05-01 to 2026-07-01
+  a2a_registry_registration: '2026-05-04'
+  sitemap_lastmod: '2026-05-25'

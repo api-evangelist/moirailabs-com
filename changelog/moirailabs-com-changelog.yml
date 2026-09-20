@@ -1,0 +1,11 @@
+generated: '2026-09-19'
+method: searched
+source: https://moirailabs.featurebase.app/en/changelog
+entry_count: 0
+scheme: null
+current_version: v1 (URI path); OpenAPI info.version v0
+entries: []
+note: 'The provider operates a Featurebase changelog (linked from the site footer alongside Help Center and Roadmap)
+  that reads "No changes published — Come back later to find what MoiraiLabs has been working on" on 2026-09-19.
+  The surface exists; it carries nothing. No ChangeLog pointer is emitted for an empty log. Roadmap board: https://moirailabs.featurebase.app/en/roadmap
+  (Backlog / Next up / In Progress / Done).'

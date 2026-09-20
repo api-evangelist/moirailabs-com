@@ -1,18 +1,106 @@
 aid: moirailabs-com
 name: Moirai Labs
-description: 'Moirai Labs is a company surfaced via the API Evangelist harvest backlog (source: a2a-registry)
-  and added to the network as a stub for full-pipeline profiling.'
+description: 'Moirai Labs is a smart-contract analytics platform for Web3 teams that turns raw EVM chain data (Ethereum,
+  Polygon, Arbitrum, Optimism, Base, Linea) into product-grade metrics: cohort retention, method-level call breakdowns,
+  daily reports, product dashboards and wallet profiling. The same credit-metered core is exposed three ways — a
+  bearer-JWT REST API described by an OpenAPI 3.0.1 document with 36 operations (including durable, idempotent asynchronous
+  analytics invocations), an A2A 1.0 agent ("Moirai Agents API", 11 skills, registered in the A2A Registry) and
+  an MCP bridge on the agent host — alongside an OpenAI ai-plugin.json manifest, llms.txt and an RFC 9116 security.txt.
+  Subscription plans meter contracts under analysis per 30-day period; the plan catalog is served anonymously by
+  the API.'
 url: https://raw.githubusercontent.com/api-evangelist/moirailabs-com/refs/heads/main/apis.yml
+image: https://moirailabs.com/og-image.png
 x-type: company
 x-source: harvest:a2a-registry
-x-tier: stub
-x-tier-reason: harvest
+x-tier: profiled
+x-tier-reason: enrichment-pipeline
 specificationVersion: '0.20'
 created: '2026-09-19'
 modified: '2026-09-19'
 tags:
 - Company
-apis: []
+- Blockchain
+- Smart Contracts
+- Web3
+- Analytics
+- Cohort Analysis
+- Wallet Profiling
+- Ethereum
+- AI Agents
+- A2A
+- MCP
+- agent-native
+apis:
+- aid: moirailabs-com:moirai-labs-api
+  name: Moirai Labs API
+  description: 'REST API for smart-contract analytics on EVM chains: register contracts and track indexer sync,
+    run cohort / method / metrics / dashboard / token analytics synchronously or as durable asynchronous invocations
+    (Idempotency-Key, Prefer: wait=N | respond-async, 202 + Location + Retry-After, cancel), fetch daily reports,
+    profile wallets, and read plans and subscriptions. Bearer JWT; 36 operations; OpenAPI 3.0.1 published at https://moirailabs.com/openapi.json.'
+  image: https://moirailabs.com/og-image.png
+  humanURL: https://moirailabs.com/a2a
+  baseURL: https://api.moirailabs.com/api/v1
+  tags:
+  - Smart Contracts
+  - Analytics
+  - Cohort Analysis
+  - Wallet Profiling
+  - Blockchain
+  properties:
+  - type: OpenAPI
+    url: openapi/moirailabs-com-openapi.yml
+  - type: OpenAPI
+    name: OpenAPI (provider-hosted)
+    url: https://moirailabs.com/openapi.json
+  - type: Documentation
+    url: https://moirailabs.com/a2a
+  - type: Authentication
+    url: authentication/moirailabs-com-authentication.yml
+  - type: Conventions
+    url: conventions/moirailabs-com-conventions.yml
+  - type: Idempotency
+    url: conventions/moirailabs-com-conventions.yml
+  - type: ErrorCatalog
+    url: errors/moirailabs-com-problem-types.yml
+  - type: RateLimits
+    url: rate-limits/moirailabs-com-rate-limits.yml
+  - type: DataModel
+    url: data-model/moirailabs-com-data-model.yml
+  - type: Overlay
+    url: overlays/moirailabs-com-openapi-overlay.yaml
+  - type: AgentSkill
+    url: skills/_index.yml
+- aid: moirailabs-com:moirai-agents-api
+  name: Moirai Agents API (A2A + MCP)
+  description: A2A 1.0 agent ("A2A-compatible analytics and contract intelligence agent", version 0.1.0) with 11
+    skills — analytics.cohorts/metrics/methods/methods_by_cohorts/transactions, reports.daily/weekly/monthly, contracts.register/status
+    and mcp.bridge — served over JSON-RPC at agent.moirailabs.com/a2a/rpc and HTTP+JSON at /a2a, plus an MCP bridge
+    at /a2a/v1/mcp. Bearer-gated (401 without a token); the agent card is published at moirailabs.com/.well-known/agent-card.json
+    and declares an A2P credit-settlement extension.
+  image: https://moirailabs.com/og-image.png
+  humanURL: https://moirailabs.com/a2a
+  baseURL: https://agent.moirailabs.com/a2a/rpc
+  tags:
+  - AI Agents
+  - A2A
+  - MCP
+  - Smart Contracts
+  - Analytics
+  properties:
+  - type: AgentCard
+    url: a2a/moirailabs-com-a2a.yml
+  - type: AgentCard
+    name: Agent card (provider-hosted)
+    url: https://moirailabs.com/.well-known/agent-card.json
+  - type: MCPServer
+    url: mcp/moirailabs-com-mcp.yml
+  - type: MCPServer
+    name: MCP bridge endpoint (bearer-gated)
+    url: https://agent.moirailabs.com/a2a/v1/mcp
+  - type: ToolCrosswalk
+    url: mcp/moirailabs-com-tool-crosswalk.yml
+  - type: Documentation
+    url: https://moirailabs.com/a2a
 maintainers:
 - FN: Kin Lane
   email: kin@apievangelist.com
@@ -21,3 +109,79 @@ maintainers:
 common:
 - type: Website
   url: https://moirailabs.com/
+- type: Documentation
+  url: https://moirailabs.com/a2a
+- type: Pricing
+  url: https://moirailabs.com/pricing
+- type: SignUp
+  url: https://moirailabs.com/auth
+- type: Login
+  url: https://moirailabs.com/auth
+- type: TermsOfService
+  url: https://moirailabs.com/terms
+- type: PrivacyPolicy
+  url: https://moirailabs.com/privacy
+- type: Blog
+  url: https://moirailabs.com/blog
+- type: Support
+  url: https://moirailabs.featurebase.app/en/help
+- type: Roadmap
+  url: https://moirailabs.featurebase.app/en/roadmap
+- type: GitHubOrganization
+  url: https://github.com/moirailabs
+- type: LLMsTxt
+  url: llms/moirailabs-com-llms.txt
+- type: LLMsTxt
+  name: llms.txt (provider-hosted)
+  url: https://moirailabs.com/llms.txt
+- type: WellKnown
+  url: well-known/moirailabs-com-well-known.yml
+- type: SecurityTxt
+  url: well-known/moirailabs-com-security.txt
+- type: AgentCard
+  url: a2a/moirailabs-com-a2a.yml
+- type: MCPServer
+  url: mcp/moirailabs-com-mcp.yml
+- type: ToolCrosswalk
+  url: mcp/moirailabs-com-tool-crosswalk.yml
+- type: Authentication
+  url: authentication/moirailabs-com-authentication.yml
+- type: Conventions
+  url: conventions/moirailabs-com-conventions.yml
+- type: Idempotency
+  url: conventions/moirailabs-com-conventions.yml
+- type: ErrorCatalog
+  url: errors/moirailabs-com-problem-types.yml
+- type: Lifecycle
+  url: lifecycle/moirailabs-com-lifecycle.yml
+- type: Conformance
+  url: conformance/moirailabs-com-conformance.yml
+- type: RateLimits
+  url: rate-limits/moirailabs-com-rate-limits.yml
+- type: Plans
+  url: plans/moirailabs-com-plans-pricing.yml
+- type: DataModel
+  url: data-model/moirailabs-com-data-model.yml
+- type: Overlay
+  url: overlays/moirailabs-com-openapi-overlay.yaml
+- type: Packages
+  url: packages/moirailabs-com-packages.yml
+- type: AgentSkill
+  url: skills/_index.yml
+- type: AgenticAccess
+  url: agentic-access/moirailabs-com-agentic-access.yml
+- type: DomainSecurity
+  url: security/moirailabs-com-domain-security.yml
+- type: VulnerabilityDisclosure
+  url: security/moirailabs-com-vulnerability-disclosure.yml
+- type: Security
+  url: security/moirailabs-com-vulnerability-disclosure.yml
+- type: RegulatoryPosture
+  url: regulatory/moirailabs-com-regulatory-posture.yml
+- type: DataSubjectRequest
+  url: https://moirailabs.com/privacy
+x-enrichment:
+  date: '2026-09-19'
+  status: enriched
+  artifacts_added: 27
+  pass: local-v3

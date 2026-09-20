@@ -1,0 +1,80 @@
+generated: '2026-09-19'
+method: derived
+source: openapi/_original/moirailabs-com-openapi.json 4xx/5xx responses (only the analytics-invocation-controller
+  declares any) plus the live 401 body observed on agent.moirailabs.com
+format: vendor envelope (not RFC 9457)
+envelope:
+  schema: ErrorResponse
+  media_type: application/json
+  fields:
+  - name: code
+    description: 'machine-readable error code string (observed: "unauthorized")'
+  - name: message
+    description: 'human-readable message (observed: "Missing bearer token")'
+  - name: details
+    description: string or null
+  example:
+    code: unauthorized
+    message: Missing bearer token
+    details: null
+  example_source: live HTTP 401 from https://agent.moirailabs.com/a2a/v1/mcp, 2026-09-19
+consistency_gap: 31 of 36 operations declare only a 200 response. Every 4xx in the contract sits on the four analytics-invocation
+  operations, and the ErrorResponse schema exists in components but is referenced by none of them (their 4xx content
+  is application/json with no schema). The invocation status body carries its own errorCode/errorMessage pair for
+  permanent failures. No error-code registry page exists (moirailabs.featurebase.app/en/help has no articles).
+problem_types:
+- status: 400
+  title: Invalid operation, request body, Prefer, Idempotency-Key, or analytics parameters
+  source_operation: openapi/moirailabs-com-openapi.yml#create
+- status: 401
+  title: Missing bearer token
+  code: unauthorized
+  source: observed on agent.moirailabs.com (A2A/MCP host); not declared in the OpenAPI
+- status: 403
+  title: The authenticated user cannot access the requested contract
+  source_operation: openapi/moirailabs-com-openapi.yml#create
+- status: 404
+  title: Analytics invocations are disabled
+  source_operation: openapi/moirailabs-com-openapi.yml#create
+  note: 404 used for a feature flag, not a missing resource
+- status: 404
+  title: Invocation is absent or belongs to another user
+  source_operation: 'openapi/moirailabs-com-openapi.yml#status, #result, #cancel'
+  note: Tenant isolation is expressed as 404, not 403
+- status: 409
+  title: Idempotency-Key was reused for another request or the invocation is no longer reusable
+  source_operation: openapi/moirailabs-com-openapi.yml#create
+- status: 409
+  title: Invocation is already complete and cannot be cancelled
+  source_operation: openapi/moirailabs-com-openapi.yml#cancel
+- status: 409
+  title: Invocation was cancelled
+  source_operation: openapi/moirailabs-com-openapi.yml#result
+- status: 410
+  title: The reused invocation result has expired
+  source_operation: openapi/moirailabs-com-openapi.yml#create
+- status: 410
+  title: Stored result has expired
+  source_operation: openapi/moirailabs-com-openapi.yml#result
+- status: 422
+  title: The calculation failed permanently inside the wait budget
+  source_operation: openapi/moirailabs-com-openapi.yml#create
+- status: 422
+  title: Calculation failed permanently
+  source_operation: openapi/moirailabs-com-openapi.yml#result
+  remediation: Read errorCode/errorMessage on the status body; a new invocation with a fresh Idempotency-Key is
+    required
+- status: 429
+  title: Per-user active invocation quota or create rate limit was exceeded
+  headers:
+  - Retry-After
+  source_operation: openapi/moirailabs-com-openapi.yml#create
+  remediation: Honour Retry-After; cancel or await in-flight invocations to free the per-user active quota
+non_error_statuses_worth_knowing:
+- status: 202
+  meaning: Calculation continues asynchronously (create) / Result is not ready (result) / Cancellation was accepted
+    (cancel)
+  headers:
+  - Location
+  - Retry-After
+  - X-Request-ID

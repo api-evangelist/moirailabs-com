@@ -1,0 +1,218 @@
+generated: '2026-09-19'
+method: probed
+source: https://moirailabs.com/.well-known/agent-card.json
+card:
+  file: a2a/moirailabs-com-agent-card.json
+discovery:
+  path: /.well-known/agent-card.json
+  canonical: true
+  host: moirailabs.com
+  note: 'The card is served from the apex (and identically from www.moirailabs.com, same 4088-byte body, same ETag
+    b10998336d8e722de6e1d5c42de5bdd2). The provider''s own llms.txt labels this URL the ''A2A agent card mirror'' and
+    names https://agent.moirailabs.com/.well-known/agent-card.json as the ''live'' card; that live URL did not answer
+    on 2026-09-19 — three GETs (https, https -k, http->301->https) each timed out after 30s with 0 bytes, while
+    every OTHER path on agent.moirailabs.com (/docs, /a2a, /a2a/rpc, /a2a/v1/mcp, /.well-known/agent.json) answered
+    instantly with HTTP 401 {"code":"unauthorized","message":"Missing bearer token"}. The apex mirror is therefore
+    the only agent card Moirai Labs currently serves anonymously. Ownership is not in question: provider.organization
+    is ''Moirai Labs'', provider.url is https://moirailabs.com, the interfaces sit on agent.moirailabs.com (same
+    IP 158.160.58.31 as api.moirailabs.com, the OpenAPI server host), ai-plugin.json names the live card URL, and
+    the card is registered at a2a-registry.org under com.moirailabs.moirai_agents_api (Registered May 4, 2026, Verified).'
+x-evidence:
+  fetched: '2026-09-19'
+  url: https://moirailabs.com/.well-known/agent-card.json
+  http_status: 200
+  content_type: application/json
+  body_bytes: 4088
+  etag: '"b10998336d8e722de6e1d5c42de5bdd2"'
+  body_parses_as: JSON object with AgentCard shape (name, version, provider, supportedInterfaces, capabilities,
+    skills, securitySchemes)
+  corroborating_probes:
+  - url: https://www.moirailabs.com/.well-known/agent-card.json
+    http_status: 200
+    note: identical body
+  - url: https://moirailabs.com/.well-known/agent.json
+    http_status: 404
+  - url: https://agent.moirailabs.com/.well-known/agent-card.json
+    http_status: 0
+    note: connection accepted, no bytes returned within 30s, three attempts; the URL the card, llms.txt and ai-plugin.json
+      all name as the live card
+  - url: https://agent.moirailabs.com/.well-known/agent.json
+    http_status: 401
+  - url: https://agent.moirailabs.com/a2a/rpc
+    http_status: 401
+    note: 'POST JSON-RPC message/send without a token: {"code":"unauthorized","message":"Missing bearer token"}
+      — the declared JSONRPC interface exists and enforces the bearerAuth scheme the card declares'
+  - url: https://agent.moirailabs.com/a2a
+    http_status: 401
+    note: the declared HTTP+JSON interface, same 401 body
+  - url: https://api.moirailabs.com/.well-known/agent-card.json
+    http_status: 404
+  - url: https://www.a2a-registry.org/agent/com.moirailabs.moirai_agents_api
+    http_status: 200
+    note: 'registry entry lists the same 11 skills, "Registered: May 4, 2026", "Verified"'
+conformance:
+  spec: A2A 1.0.0
+  grade: conformant
+  protocol_version: '1.0'
+  preferred_transport: null
+  transport: JSONRPC (supportedInterfaces[0].protocolBinding) and HTTP+JSON (supportedInterfaces[1])
+  hard_checks:
+    capabilities_is_object: true
+    protocol_version_present: true
+    skills_is_array: true
+  optional_fields:
+    default_input_modes: true
+    default_output_modes: true
+    preferred_transport: false
+  grade_basis: capabilities is an OBJECT (streaming, pushNotifications, extendedAgentCard, extensions[]). protocolVersion
+    is present as '1.0' on both supportedInterfaces[] entries, which is where A2A 1.0.0 carries it after supportedInterfaces[]
+    replaced the 0.3-era top-level url/preferredTransport/protocolVersion triple — the same basis the catalog applied
+    to leadping and 558686-xyz. skills is an ARRAY of 11 fully-populated skills (id, name, description, tags, inputModes,
+    outputModes). defaultInputModes and defaultOutputModes are both declared. preferredTransport is absent because
+    1.0.0 superseded it with supportedInterfaces[].protocolBinding, which the card declares.
+  deviations:
+  - field: supportedInterfaces[].url / documentationUrl / extensions[].params.*Endpoint
+    observed: every URL is http://, not https://
+    note: agent.moirailabs.com 301s http to https, so clients that follow redirects reach TLS; but a card that advertises
+      plaintext endpoints for a bearer-token API invites a client to send the token in the clear on the first hop.
+      Recorded as a security hygiene deviation, not a shape failure.
+  - field: documentationUrl
+    observed: http://agent.moirailabs.com/docs answers 401 Missing bearer token
+    note: The documentation the card points at is behind the same bearer gate as the agent itself; an anonymous
+      agent cannot read the docs before it has a token.
+  - field: supportedInterfaces[].tenant
+    observed: empty string on both interfaces
+    note: Written as "" rather than omitted. Harmless.
+  - field: securitySchemes.bearerAuth
+    observed: 'oneof-style wrapper {httpAuthSecurityScheme:{scheme: bearer}} with no bearerFormat and no token-issuance
+      URL'
+    note: The card says bearer and nothing about how an agent obtains one; the OpenAPI declares bearerFormat JWT
+      and the site issues tokens through a Supabase-backed dashboard login, not through any endpoint the card names.
+  - field: securityRequirements[].schemes.bearerAuth.list
+    observed: empty array
+    note: No scope list; the credit-metered access model in ai-plugin.json and the pricing page is not expressed
+      as scopes.
+  - field: capabilities.extensions[]
+    observed: 'two vendor extensions — https://api.moirailabs.com/a2p/v1 (an "A2P settlement and credits" extension
+      with offer/intent/receipt endpoints, rails: [crypto_contract], and four credit products of 1000/5000/15000/50000
+      credits) and https://api.moirailabs.com/mcp/v1 (an MCP bridge at /a2a/v1/mcp)'
+    note: Both extension URIs are on api.moirailabs.com and both 404 there (they are identifiers, not documents).
+      The A2P extension is the only machine-readable statement of agent-payable pricing the provider publishes;
+      it names credit bundles but no price per bundle.
+  - field: skills
+    observed: 11 skills, none with examples or per-skill security
+    note: Skill names use dotted namespaces (analytics.cohorts, reports.daily, contracts.register); ten map cleanly
+      onto the REST surface, the eleventh (mcp.bridge) is a pointer at the MCP bridge rather than a capability —
+      see mcp/moirailabs-com-tool-crosswalk.yml.
+  - field: signatures
+    observed: absent
+    note: No JWS block; authenticity rests on TLS to moirailabs.com (Cloudflare-fronted).
+agent_card:
+  name: Moirai Agents API
+  description: A2A-compatible analytics and contract intelligence agent
+  version: 0.1.0
+  documentation_url: http://agent.moirailabs.com/docs
+  provider:
+    organization: Moirai Labs
+    url: https://moirailabs.com
+  supported_interfaces:
+  - url: http://agent.moirailabs.com/a2a/rpc
+    protocol_binding: JSONRPC
+    protocol_version: '1.0'
+  - url: http://agent.moirailabs.com/a2a
+    protocol_binding: HTTP+JSON
+    protocol_version: '1.0'
+  capabilities:
+    streaming: true
+    push_notifications: false
+    extended_agent_card: false
+    extensions:
+    - uri: https://api.moirailabs.com/a2p/v1
+      required: false
+      description: Moirai A2P settlement and credits extension
+    - uri: https://api.moirailabs.com/mcp/v1
+      required: false
+      description: Moirai MCP bridge endpoint
+  default_input_modes:
+  - application/json
+  default_output_modes:
+  - application/json
+  security_schemes:
+    bearerAuth:
+      type: httpAuthSecurityScheme
+      scheme: bearer
+  skills:
+  - id: analytics_cohorts
+    name: analytics.cohorts
+    description: Cohort analytics for contract activity
+    tags:
+    - analytics
+    - cohorts
+  - id: analytics_metrics
+    name: analytics.metrics
+    description: Aggregate metrics for contract transactions
+    tags:
+    - analytics
+    - metrics
+  - id: analytics_methods
+    name: analytics.methods
+    description: Method-level analytics breakdown
+    tags:
+    - analytics
+    - methods
+  - id: analytics_methods_by_cohorts
+    name: analytics.methods_by_cohorts
+    description: Method activity segmented by cohorts
+    tags:
+    - analytics
+    - methods
+    - cohorts
+  - id: analytics_transactions
+    name: analytics.transactions
+    description: Transaction-level analytics feed
+    tags:
+    - analytics
+    - transactions
+  - id: reports_daily
+    name: reports.daily
+    description: Daily aggregated contract report
+    tags:
+    - reports
+    - daily
+  - id: reports_weekly
+    name: reports.weekly
+    description: Weekly aggregated contract report
+    tags:
+    - reports
+    - weekly
+  - id: reports_monthly
+    name: reports.monthly
+    description: Monthly aggregated contract report
+    tags:
+    - reports
+    - monthly
+  - id: contracts_register
+    name: contracts.register
+    description: Register a contract for analytics indexing
+    tags:
+    - contracts
+    - indexing
+  - id: contracts_status
+    name: contracts.status
+    description: Check indexing status for a registered contract
+    tags:
+    - contracts
+    - status
+  - id: mcp_bridge
+    name: mcp.bridge
+    description: Use vendor MCP bridge endpoint at /a2a/v1/mcp
+    tags:
+    - mcp
+    - vendor
+surface_relationship:
+  note: 'Moirai Labs publishes three agent surfaces from one credit-metered core. A2A: 11 skills at https://agent.moirailabs.com/a2a/rpc
+    (JSONRPC) and /a2a (HTTP+JSON), bearer-gated, with an A2P settlement extension. MCP: a bridge at https://agent.moirailabs.com/a2a/v1/mcp,
+    bearer-gated (tools/list -> 401), see mcp/moirailabs-com-mcp.yml. REST: 36 operations at http://api.moirailabs.com/api/v1
+    per the OpenAPI at https://moirailabs.com/openapi.json, of which the plan catalog (GET /plans/active) is anonymous
+    and live. The A2A skills are a curated projection — analytics, reports and contract registration — not the whole
+    REST surface (users, subscriptions, plans admin and wallet profiling have no skill).'

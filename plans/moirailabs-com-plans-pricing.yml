@@ -1,0 +1,154 @@
+generated: '2026-09-19'
+method: probed
+source: 'https://api.moirailabs.com/api/v1/plans/active (anonymous GET, HTTP 200, 2026-09-19 — the operation getActivePlans
+  declares security: [])'
+docs: https://moirailabs.com/pricing
+docs_note: The pricing page is a client-rendered SPA route; its plan table was read from the compiled application
+  (assets/index-BW_u21el.js, constant KA[] and the comparison rows SAe[]) rather than from server HTML. Schema.org
+  Offer markup in the Pricing chunk sets priceCurrency USD and unitText MONTH.
+plan_count: 4
+currency: USD
+currency_source: pricing page schema.org markup; the /plans/active payload carries a bare number with no currency
+  field
+model: Subscription per 30-day period metering contracts under analysis; add-ons per seat and per additional contract;
+  credit-metered AI/agent usage (A2P credit bundles of 1000/5000/15000/50000 credits are advertised in the agent
+  card with no price)
+plans:
+- id: b14e018a-8ff9-4586-8fc6-4d5a855c1c74
+  name: entusiast
+  price: 150.0
+  currency: USD
+  period: 30 days
+  included:
+    contracts: 1
+    enrichedProfilingRequestsPerPeriod: 0
+  is_active: true
+- id: 5f175c37-d910-45b0-a832-6908122da9cd
+  name: startup
+  price: 400.0
+  currency: USD
+  period: 30 days
+  included:
+    contracts: 3
+    enrichedProfilingRequestsPerPeriod: 0
+  is_active: true
+- id: 74d058d6-4d71-49d3-b5ba-2374aca3e06d
+  name: business
+  price: 625.0
+  currency: USD
+  period: 30 days
+  included:
+    contracts: 5
+    enrichedProfilingRequestsPerPeriod: 0
+  is_active: true
+- id: 5d134974-6da9-4d64-b016-ae360d5c07fa
+  name: enterprise
+  price: 999.0
+  currency: USD
+  period: 30 days
+  included:
+    contracts: 10
+    enrichedProfilingRequestsPerPeriod: 0
+  is_active: true
+pricing_page_tiers:
+  source: https://moirailabs.com/pricing (compiled app constant, read 2026-09-19)
+  currency: USD
+  billing: per month
+  tiers:
+  - id: free
+    name: Free
+    price: 0
+    price_label: Free
+    contract_slots: 1
+    seats: 1
+    ai_chat_requests_per_month: 5
+    reports: false
+    api_access: 'No'
+    support: Community
+    chain_support: All Networks
+    custom_features: false
+    competitor_analysis: false
+  - id: enthusiast
+    name: Enthusiast
+    price: 150
+    contract_slots: 3
+    seats: 1
+    ai_chat_requests_per_month: 10
+    reports: false
+    api_access: 'No'
+    support: Community
+    chain_support: All Networks
+  - id: startup
+    name: Startup
+    price: 450
+    contract_slots: 10
+    seats: 1
+    ai_chat_requests_per_month: 50
+    reports: All types
+    api_access: Limited
+    support: Priority email
+    popular: true
+    chain_support: All Networks
+  - id: business
+    name: Business
+    price: 750
+    contract_slots: 15
+    seats: 1
+    ai_chat_requests_per_month: 200
+    reports: All types
+    api_access: Full
+    support: Priority email
+    competitor_analysis: true
+    chain_support: All Networks
+  - id: enterprise
+    name: Enterprise
+    price: null
+    price_label: Contact for pricing
+    contract_slots: Unlimited
+    seats: 1
+    ai_chat_requests_per_month: 300
+    reports: All types
+    api_access: Full + RAG
+    support: Dedicated manager
+    custom_features: true
+    competitor_analysis: true
+    chain_support: All Networks
+  add_ons:
+    additional_seat:
+      price: 25
+      currency: USD
+      unit: per seat per month (seatPrice)
+    additional_contract:
+      price: 50
+      currency: USD
+      unit: per contract per month (additionalContractPrice)
+    ai_chat_requests:
+      price: 15
+      currency: USD
+      unit: 'not stated on the page (aiChatRequestsPrice: 15)'
+disagreement:
+  note: The live plan catalog and the pricing page disagree on price and quota for every paid tier, and the page
+    lists a Free tier the catalog does not return. Both are recorded verbatim; neither was adjusted. The catalog
+    is what the billing flow (/billing, useUserPlan) reads, so it is the operative price list; the page is what
+    a buyer sees.
+  rows:
+  - tier: Enthusiast
+    page: USD 150 / 3 contracts
+    catalog: USD 150 / 1 contract (named "entusiast")
+  - tier: Startup
+    page: USD 450 / 10 contracts
+    catalog: USD 400 / 3 contracts
+  - tier: Business
+    page: USD 750 / 15 contracts
+    catalog: USD 625 / 5 contracts
+  - tier: Enterprise
+    page: Contact for pricing / Unlimited
+    catalog: USD 999 / 10 contracts
+  - tier: Free
+    page: Free / 1 contract / 5 AI chat requests per month
+    catalog: not returned by /plans/active
+api_access_by_tier:
+  note: '"API Access" on the pricing page is No (Free, Enthusiast), Limited (Startup), Full (Business), Full + RAG
+    (Enterprise). The OpenAPI does not express these tiers; what "Limited" excludes is not published.'
+payment_methods: 'Terms of Service section 4: supported cryptocurrencies or payment cards, processed by third parties;
+  the agent card A2P extension names rails: [crypto_contract]'

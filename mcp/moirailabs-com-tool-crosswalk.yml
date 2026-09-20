@@ -1,0 +1,163 @@
+generated: '2026-09-19'
+method: derived
+source: a2a/moirailabs-com-agent-card.json skills[] bound by name and semantics to operationIds in openapi/_original/moirailabs-com-openapi.json
+  (36 operations); the MCP bridge tools/list is bearer-gated so the binding is by published skill name, not observed
+  schema.
+surfaces:
+  openapi:
+    file: openapi/moirailabs-com-openapi.yml
+    remote: https://moirailabs.com/openapi.json
+    operations: 36
+    base: http://api.moirailabs.com/api/v1
+    gated: bearer JWT on 27 of 36 operations; plans, user creation and registration-status are anonymous
+  a2a:
+    endpoint: https://agent.moirailabs.com/a2a/rpc
+    skills: 11
+    gated: bearer (401 anonymously)
+  mcp:
+    endpoint: https://agent.moirailabs.com/a2a/v1/mcp
+    gated: bearer — tools/list returned 401; tool names below are the A2A skills the bridge is declared to project
+  graphql: null
+crosswalk:
+- tool: analytics.cohorts
+  category: analytics
+  rest:
+  - getCohortAnalysis
+  binding: rest
+  confidence: high
+  note: GET /analytics/cohorts?contractAddress&interval&startDate&endDate; the async form is POST /analytics/invocations
+    with operation COHORTS (CohortsInvocationRequest carries the same four fields).
+  async_rest:
+  - create
+- tool: analytics.metrics
+  category: analytics
+  rest:
+  - getProductMetrics
+  binding: rest
+  confidence: high
+  note: GET /analytics/metrics?contractAddress; async form operation METRICS.
+  async_rest:
+  - create
+- tool: analytics.methods
+  category: analytics
+  rest:
+  - getMethodAnalysis
+  binding: rest
+  confidence: high
+  note: GET /analytics/methods?contractAddress; async form operation METHODS.
+  async_rest:
+  - create
+- tool: analytics.methods_by_cohorts
+  category: analytics
+  rest:
+  - getDashboardAnalytics
+  binding: rest
+  confidence: medium
+  note: No single operation is named methods-by-cohorts. DashboardAnalyticsResponse and DailyReportResponse both
+    carry a methodsByCohorts field; the dashboard endpoint (operation DASHBOARD async) is the closest single-call
+    source. Medium confidence.
+- tool: analytics.transactions
+  category: analytics
+  rest:
+  - getCohortTransactions
+  binding: rest
+  confidence: medium
+  note: GET /analytics/cohort-transactions?contractAddress&period&granularity returns TransactionWithCohort rows
+    — the only transaction-level feed in the spec. Async form operation COHORT_TRANSACTIONS.
+  async_rest:
+  - create
+- tool: reports.daily
+  category: reports
+  rest:
+  - getReports
+  binding: rest
+  confidence: high
+  note: GET /api/reports/daily/{contractAddress} -> DailyReportResponse[].
+- tool: reports.weekly
+  category: reports
+  rest:
+  - getReports
+  binding: rest
+  confidence: low
+  note: The spec has only a daily report operation; a weekly report must be an agent-side aggregation of daily rows
+    or a server-side composite not in the public contract.
+- tool: reports.monthly
+  category: reports
+  rest:
+  - getReports
+  binding: rest
+  confidence: low
+  note: Same as reports.weekly — no monthly operation in the spec.
+- tool: contracts.register
+  category: contracts
+  rest:
+  - registerContract
+  binding: rest
+  confidence: high
+  note: POST /contracts with ContractInfoRequest {chainId, address (42 chars), type}.
+- tool: contracts.status
+  category: contracts
+  rest:
+  - getContractStatus
+  binding: rest
+  confidence: high
+  note: GET /contracts/status?contractAddress -> ContractSyncStatusResponse {currentBlock, targetBlock, progress,
+    syncing}.
+mcp_only:
+- tool: mcp.bridge
+  reason: 'Not a capability: the skill is a pointer at the MCP bridge endpoint (/a2a/v1/mcp) itself, exposed so
+    an A2A client can discover the MCP surface. No REST operation.'
+rest_only:
+- capability: async analytics invocations
+  operations:
+  - create
+  - status
+  - result
+  - cancel
+  note: 'The durable-job surface (Idempotency-Key, Prefer: wait=N / respond-async, 202 + Location + Retry-After,
+    cancel) is REST-only; the A2A skills expose the synchronous calls.'
+- capability: wallet profiling
+  operations:
+  - simpleProfile
+  - enrichedProfile
+  - getRequestStatus
+  - getCurrentQuota
+- capability: contracts (read/delete)
+  operations:
+  - getContract
+  - fetchDataContract
+  - getUserContracts
+  - deleteContract
+- capability: analytics (other)
+  operations:
+  - getTokenAnalysis
+  - getProductDashboard
+  - getDashboardAnalytics
+- capability: account, subscriptions, plans
+  operations:
+  - getUser
+  - updateUser
+  - createUser
+  - getRegistrationStatus
+  - getSubscription
+  - updateSubscription
+  - createSubscription
+  - getPlan
+  - updatePlan
+  - deletePlan
+  - getAllPlans
+  - createPlan
+  - getActivePlans
+- capability: wallet balances
+  operations:
+  - getTokensBalance
+coverage:
+  tools_named: 11
+  tools_bound: 10
+  tools_bound_high: 6
+  tools_bound_medium: 2
+  tools_bound_low: 2
+  mcp_only: 1
+  rest_ops_total: 36
+  rest_ops_with_tool: 8
+  rest_only_ops: 28

@@ -1,0 +1,14 @@
+generated: '2026-09-19'
+method: searched
+source: registry.npmjs.org search (moirai labs, moirailabs, @moirailabs/sdk, @moirai-labs/sdk, moirai-labs); pypi.org
+  (moirai-labs, moirailabs — 404; "moirai" is an unrelated Digital Control Manager backend by acristoffers); github.com/moirailabs
+  and github.com/moirai-labs (both organizations, 0 public repositories); https://moirailabs.com/api-sdk (SPA route,
+  no SDK content in the compiled app); ai-plugin.json and llms.txt name no client library
+package_count: 0
+official_count: 0
+packages: []
+note: 'Moirai Labs ships no first-party client library, CLI or MCP package on any registry. The sitemap advertises
+  an /api-sdk page but the compiled application has no route for it (routes: /, /a2a, /about, /pricing, /blog, /privacy,
+  /terms and the authenticated dashboard). Integration is by the OpenAPI at https://moirailabs.com/openapi.json,
+  the A2A card, and the bearer-gated MCP bridge. The GitHub organization exists (created 2025-04-02) and is linked
+  from the site footer but publishes nothing.'

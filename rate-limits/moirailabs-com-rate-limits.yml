@@ -1,0 +1,99 @@
+generated: '2026-09-19'
+method: searched
+source: openapi/_original/moirailabs-com-openapi.json (POST /analytics/invocations 429 + Retry-After; WalletProfilingRateLimitResponse);
+  https://moirailabs.com/a2a ("credit-aware rate limits"); live GET https://api.moirailabs.com/api/v1/plans/active
+  2026-09-19 (no RateLimit-* headers returned)
+limit_count: 5
+summary: The only numbers Moirai Labs publishes are per-plan monthly quotas for "AI Chat with Agent" requests (5/10/50/200/300
+  per month by tier) and per-plan contract slots. No requests-per-second/minute ceiling is published for the REST
+  API, the A2A agent or the MCP bridge; the contract declares a 429 with Retry-After on one operation, the wallet-profiling
+  responses carry an in-body {limit, remaining, resetAt} block, and the marketing copy says "credit-aware rate limits".
+  An agent discovers the runtime ceiling only by hitting it.
+rate_limits:
+- name: AI chat with agent — Free
+  scope: per-account (plan quota)
+  window: 1 month
+  limit: 5
+  metric: AI chat requests
+  burst: null
+  source: https://moirailabs.com/pricing ("AI Chat with Agent" row of the plan comparison, compiled app constant)
+  domains:
+  - agent.moirailabs.com
+- name: AI chat with agent — Enthusiast
+  scope: per-account (plan quota)
+  window: 1 month
+  limit: 10
+  metric: AI chat requests
+  burst: null
+  source: https://moirailabs.com/pricing ("AI Chat with Agent" row of the plan comparison, compiled app constant)
+  domains:
+  - agent.moirailabs.com
+- name: AI chat with agent — Startup
+  scope: per-account (plan quota)
+  window: 1 month
+  limit: 50
+  metric: AI chat requests
+  burst: null
+  source: https://moirailabs.com/pricing ("AI Chat with Agent" row of the plan comparison, compiled app constant)
+  domains:
+  - agent.moirailabs.com
+- name: AI chat with agent — Business
+  scope: per-account (plan quota)
+  window: 1 month
+  limit: 200
+  metric: AI chat requests
+  burst: null
+  source: https://moirailabs.com/pricing ("AI Chat with Agent" row of the plan comparison, compiled app constant)
+  domains:
+  - agent.moirailabs.com
+- name: AI chat with agent — Enterprise
+  scope: per-account (plan quota)
+  window: 1 month
+  limit: 300
+  metric: AI chat requests
+  burst: null
+  source: https://moirailabs.com/pricing ("AI Chat with Agent" row of the plan comparison, compiled app constant)
+  domains:
+  - agent.moirailabs.com
+signals:
+  status_on_exhaustion: 429
+  response_headers:
+  - Retry-After (declared on 429 and 202 of POST /analytics/invocations; CORS-exposed)
+  standard_headers:
+    RateLimit-*: false
+    X-RateLimit-*: false
+    observed_on_live_200: none — the anonymous /plans/active response carried x-request-id and CORS headers only
+  in_body:
+    schema: WalletProfilingRateLimitResponse
+    fields:
+    - limit
+    - remaining
+    - resetAt (date-time)
+    where: WalletProfilingResponse.rateLimit on POST /wallet-profiling/simple and /enriched
+  quota_in_body:
+    schema: WalletProfilingQuotaResponse
+    fields:
+    - limit
+    - reserved
+    - used
+    - remaining
+    - periodStart
+    - periodEnd
+    also: GET /subscriptions/current/wallet-profiling-quota
+documented_scopes:
+- scope: per-user
+  applies_to: POST /analytics/invocations
+  description: '"Per-user active invocation quota or create rate limit was exceeded" — two limits (concurrent active
+    invocations, and create rate) behind one 429; neither number published'
+- scope: per-plan (30-day period)
+  applies_to: contracts under analysis; enriched wallet-profiling requests
+  description: PlanResponse.contractAmount (1, 3, 5, 10 on the live plans) and enrichedProfilingRequestsPerPeriod
+    (0 on every live plan) — plan quotas, not request rates
+gaps:
+- No requests-per-window number for any endpoint
+- No RateLimit-*/X-RateLimit-* headers
+- Synchronous analytics GETs declare no 429 at all
+- The A2A/MCP host applies the same bearer gate; its limits are equally unpublished
+note_on_scope: These are subscription quotas on the agent-chat surface, not HTTP rate limits; they are recorded
+  because they are the only published, numeric usage ceilings and they bound what an autonomous agent on a given
+  plan can ask.

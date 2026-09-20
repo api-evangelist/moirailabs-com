@@ -1,0 +1,205 @@
+generated: '2026-09-19'
+method: derived
+source: openapi/_original/moirailabs-com-openapi.json components.schemas (64 schemas) — $ref links plus *Id reference
+  fields
+render: null
+identifiers:
+  style: UUID v4 for platform entities; (chainId, 0x address) pair for on-chain entities
+  prefixes: null
+entities:
+- name: User
+  schemas:
+  - UserInfoRequest
+  - UserInfoResponse
+  - UserRegistrationStatusResponse
+  id: userId (uuid, minted by the Supabase auth layer and echoed into the API)
+  fields:
+  - email
+  - company
+  - firstName
+  - lastName
+  - country
+- name: Plan
+  schemas:
+  - PlanRequest
+  - PlanResponse
+  id: id (uuid)
+  fields:
+  - name
+  - contractAmount
+  - period (days)
+  - price
+  - is_active
+  - enrichedProfilingRequestsPerPeriod
+- name: Subscription
+  schemas:
+  - SubscriptionRequest
+  - SubscriptionUpdateRequest
+  - SubscriptionResponse
+  id: id (uuid)
+  fields:
+  - planId
+  - paymentId
+  - startDate
+  - endDate
+  - isActive
+- name: Contract
+  schemas:
+  - ContractInfoRequest
+  - ContractInfoResponse
+  - ContractSyncStatusResponse
+  id: id (uuid) internally; (chainId, address) externally
+  fields:
+  - chainId
+  - address
+  - type
+  - userId
+- name: AnalyticsInvocation
+  schemas:
+  - AnalyticsInvocationCreateRequest
+  - AnalyticsInvocationStatusResponse
+  - AnalyticsInvocationLinks
+  - '*InvocationRequest'
+  - '*InvocationCreateCommand'
+  id: id (uuid)
+  fields:
+  - operation
+  - status
+  - stage
+  - attempt
+  - maxAttempts
+  - retryAfterSeconds
+  - dependencyId
+  - errorCode
+  - errorMessage
+  - createdAt
+  - startedAt
+  - links
+- name: AnalyticsResult
+  schemas:
+  - CohortAnalysisResponse
+  - CohortData
+  - CohortTransactionResponse
+  - TransactionWithCohort
+  - MethodAnalysisResponse
+  - ProductMetricsResponse
+  - TokenAnalysisResponse
+  - DashboardAnalyticsResponse
+  - DashboardAnalyticsMeta
+  - DashboardSectionStatus
+  - ProductAnalyticsDashboardResponse
+  - ProductAnalyticsMeta
+  - ProductKpi
+  - ProductMatrix
+  - ProductMatrixCell
+  - ProductMatrixDimension
+  - ProductMethodPerformance
+  - ProductRiskSummary
+  - ProductSectionStatus
+  - ProductSignal
+  - ProductWalletClass
+  - ProductActivityPoint
+  - Metadata
+  - TimeSeriesEntry
+  id: none (keyed by contractAddress + window)
+- name: DailyReport
+  schemas:
+  - DailyReportResponse
+  id: reportId (uuid)
+  fields:
+  - contractAddress
+  - chainId
+  - startBlock
+  - endBlock
+  - datetime
+  - totalTxAmount
+  - dau
+  - newWalletsAmount
+  - failedTx
+  - gasUsed
+  - usersByCohorts
+  - methodsByCohorts
+- name: WalletProfilingRequest
+  schemas:
+  - WalletProfilingSimpleRequest
+  - WalletProfilingEnrichedRequest
+  - WalletProfilingResponse
+  - WalletProfilingClassResponse
+  - WalletProfilingQualityResponse
+  - WalletProfilingBillingResponse
+  - WalletProfilingQuotaResponse
+  - WalletProfilingRateLimitResponse
+  id: requestId (uuid)
+  fields:
+  - walletAddress
+  - chainId
+  - mode
+  - status
+  - classes[]
+  - quota
+  - billing
+  - quality
+  - rateLimit
+- name: Balances
+  schemas:
+  - BalancesResponse
+  id: none (wallet + addresses query)
+- name: ErrorResponse
+  schemas:
+  - ErrorResponse
+  id: none
+relationships:
+- from: Subscription
+  to: User
+  type: belongs_to
+  via: SubscriptionResponse.userId
+- from: Subscription
+  to: Plan
+  type: belongs_to
+  via: SubscriptionRequest.planId / SubscriptionResponse.planId
+- from: User
+  to: Subscription
+  type: has_one
+  via: GET /subscriptions/current/wallet-profiling-quota (current subscription is implicit in the bearer)
+- from: Contract
+  to: User
+  type: belongs_to
+  via: ContractInfoResponse.userId; GET /contracts/user
+- from: User
+  to: Contract
+  type: has_many
+  via: GET /contracts/user; Plan.contractAmount caps the count
+- from: AnalyticsInvocation
+  to: Contract
+  type: belongs_to
+  via: '*InvocationRequest.contractAddress (403 when the user cannot access the contract)'
+- from: AnalyticsInvocation
+  to: AnalyticsInvocation
+  type: belongs_to
+  via: AnalyticsInvocationStatusResponse.dependencyId (WAITING_DEPENDENCY state)
+- from: AnalyticsInvocation
+  to: AnalyticsResult
+  type: has_one
+  via: links.result -> GET /analytics/invocations/{id}/result
+- from: DailyReport
+  to: Contract
+  type: belongs_to
+  via: DailyReportResponse.contractAddress + chainId
+- from: WalletProfilingRequest
+  to: Subscription
+  type: belongs_to
+  via: WalletProfilingResponse.quota (periodStart/periodEnd) and Plan.enrichedProfilingRequestsPerPeriod
+- from: WalletProfilingRequest
+  to: WalletProfilingClassResponse
+  type: has_many
+  via: WalletProfilingResponse.classes[]
+- from: AnalyticsResult
+  to: TimeSeriesEntry
+  type: has_many
+  via: $ref from CohortAnalysisResponse / MethodAnalysisResponse / ProductMetricsResponse
+notes:
+- Plan.period is an integer number of days (30 on every live plan) rather than an enum.
+- 'Contract identity is dual: UUID inside the platform, (chainId, address) at the edge — getTokenAnalysis takes
+  contractId (uuid) while every other analytics call takes contractAddress.'
+- Several DailyReportResponse fields (usersByCohorts, methodAmount, methodsByCohorts, txsPerDayByMethods) are typed
+  string and evidently carry serialized JSON.

@@ -1,0 +1,180 @@
+generated: '2026-09-19'
+method: derived
+source: openapi/_original/moirailabs-com-openapi.json (https://moirailabs.com/openapi.json, OpenAPI 3.0.1, 36 operations)
+  plus a live anonymous GET of https://api.moirailabs.com/api/v1/plans/active (2026-09-19) whose CORS headers enumerate
+  the request/response header contract
+docs:
+- https://moirailabs.com/a2a
+- https://moirailabs.com/openapi.json
+base_url: https://api.moirailabs.com/api/v1
+base_url_note: servers[] says http://api.moirailabs.com/api/v1; the host 301s http to https and answers on TLS 1.3.
+  Left unmodified in the spec.
+media_type: application/json (requests); responses declared as */* in the spec, served as application/json
+api_style: REST-ish RPC over a Spring Boot controller layout (controller-named tags); resource nouns for users/plans/subscriptions/contracts,
+  verb-shaped analytics endpoints
+auth:
+  style: HTTP Bearer JWT in the Authorization header (securitySchemes.bearerAuth, global security requirement)
+  anonymous_operations:
+  - getPlan
+  - updatePlan
+  - deletePlan
+  - getAllPlans
+  - createPlan
+  - getActivePlans
+  - createUser
+  - getRegistrationStatus
+  anonymous_note: 'security: [] on the plan-controller and user-creation operations. GET /plans/active is confirmed
+    anonymous and live; updatePlan is described as "available only for ADMIN" yet declares security: [], a spec/enforcement
+    mismatch worth knowing before trusting security: [] elsewhere. getCohortAnalysis additionally declares an explicit
+    required Authorization header parameter.'
+  detail: authentication/moirailabs-com-authentication.yml
+idempotency:
+  supported: true
+  coverage: partial
+  mechanism: Idempotency-Key request header
+  header: Idempotency-Key
+  scope:
+  - operation: create
+    path: POST /analytics/invocations
+    note: Creates one durable analytics calculation; the only operation declaring the header
+  retention: undocumented (the spec declares a 410 "The reused invocation result has expired" and a 409 "Idempotency-Key
+    was reused for another request or the invocation is no longer reusable", so keys expire, but no window is stated)
+  conflict_behavior: 409 when the key is reused with a different request or the invocation is no longer reusable;
+    410 when the reused result has expired; 400 on an invalid key
+  key_format: string; format and length undocumented
+  evidence: CORS Access-Control-Allow-Headers on api.moirailabs.com lists Idempotency-Key, Prefer and X-Request-ID;
+    the OpenAPI declares Idempotency-Key on exactly 1 of 13 mutating operations (create).
+  gaps:
+  - registerContract, createSubscription, createUser, updateUser, updateSubscription, simpleProfile, enrichedProfile,
+    deleteContract and the plan-admin writes carry no idempotency key
+  - No retention window is published
+  - Replay semantics for an identical retry (same key, same body) are implied — "Stored result; calculation is not
+    rerun" on GET result — but not stated for the POST itself
+  description: Idempotency is scoped to the async invocation surface (1 of 13 writes), not the whole API. This is
+    the leadping shape, not the Stripe shape.
+async_operations:
+  pattern: durable job with Prefer negotiation (RFC 7240 style)
+  create: POST /analytics/invocations (operation enum COHORT_TRANSACTIONS | COHORTS | DASHBOARD | PRODUCT_DASHBOARD
+    | METRICS | METHODS | TOKENS, discriminated oneOf request)
+  prefer:
+    wait=N: server waits up to N seconds for the same job; 200 when it completes inside the budget
+    respond-async: returns 202 immediately
+  on_202:
+    headers:
+    - Location (invocation status URL)
+    - Retry-After (polling delay in seconds)
+    - X-Request-ID
+    body: AnalyticsInvocationStatusResponse with status (QUEUED | WAITING_DEPENDENCY | RUNNING | SUCCEEDED | FAILED
+      | CANCEL_REQUESTED | CANCELLED | EXPIRED), stage, attempt/maxAttempts, retryAfterSeconds, dependencyId, links
+      {self, result, cancel}
+  poll: GET /analytics/invocations/{id} (status) then GET /analytics/invocations/{id}/result — 202 not ready, 200
+    stored result (calculation is not rerun), 409 cancelled, 410 expired, 422 failed permanently
+  cancel: POST /analytics/invocations/{id}/cancel — 202 accepted, 409 already complete
+  note: 'The best-designed corner of the contract: explicit state machine, HATEOAS links, Retry-After and Location.
+    It is also REST-only — the A2A skills expose the synchronous GET endpoints.'
+reversibility:
+  grade: documented
+  summary: One write surface has a reversal path with no stated window; the rest have none. Reads dominate (23 of
+    36 operations).
+  surfaces:
+  - write: create (POST /analytics/invocations)
+    reversal: cancel (POST /analytics/invocations/{id}/cancel)
+    window: until the invocation completes — 409 "Invocation is already complete and cannot be cancelled"; no time
+      window stated
+    window_source: openapi/_original/moirailabs-com-openapi.json responses on cancel
+    grade: documented
+    note: The window is a state condition (before SUCCEEDED/FAILED) rather than a stated duration, so it does not
+      meet the verified bar.
+  - write: registerContract (POST /contracts)
+    reversal: deleteContract (DELETE /contracts/{contractAddress})
+    window: not stated
+    grade: documented
+    note: Delete "will delete contract from list of analysis"; whether indexed data or consumed plan slots are restored
+      is not documented. Re-registering appears possible (no uniqueness rule stated).
+  - write: createSubscription / updateSubscription
+    reversal: null
+    window: not stated
+    grade: none
+    note: No cancel, refund or downgrade operation. The Terms of Service (Effective 06 April 2025) say payments
+      are processed by third parties and state no refund policy.
+  - write: simpleProfile / enrichedProfile (POST /wallet-profiling/*)
+    reversal: null
+    window: not stated
+    grade: none
+    note: Credit-metered (WalletProfilingBillingResponse); no reversal of consumed quota is documented.
+  - write: createUser / updateUser
+    reversal: null
+    window: not stated
+    grade: none
+    note: Account deletion is offered only by emailing hello@moirailabs.com (privacy policy section 5), not via
+      the API.
+  - write: createPlan / updatePlan / deletePlan
+    reversal: deletePlan
+    window: not stated
+    grade: documented
+    note: Admin-only per the descriptions; deletePlan reverses createPlan.
+  dry_run_mode: 'none — no Prefer: dry-run, no validate-only flag, no sandbox host (see lifecycle/)'
+pagination:
+  style: none
+  note: No list operation takes page, cursor, limit or offset. getUserContracts, getAllPlans, getActivePlans and
+    getReports return unbounded arrays. Time-series endpoints are bounded by startDate/endDate/dateFrom/dateTo and
+    interval/granularity (daily | weekly | monthly) instead.
+filtering:
+  time_windows: startDate/endDate (date) on cohorts and dashboard; dateFrom/dateTo plus compareDateFrom/compareDateTo
+    on product-dashboard; startBlock/endBlock on fetchDataContract
+  granularity: 'interval and granularity strings: daily | weekly | monthly'
+  chain_selection: chainId (integer) and chain (string) query params; ContractInfoRequest.chainId
+field_expansion:
+  supported: false
+metadata:
+  supported: false
+  note: No free-form metadata field on any resource; ContractInfoRequest.type is a 255-char free string.
+request_tracing:
+  header: X-Request-ID
+  direction: request (optional, client-generated, ^[A-Za-z0-9._:-]{1,128}$) and response (effective value echoed;
+    "used by backend audit logging")
+  observed: 'x-request-id: 2e279d17-c16c-4c5f-94a9-def5647df0f9 on the anonymous GET /plans/active'
+  declared_on: every operation
+versioning:
+  scheme: URI path prefix /api/v1 on the server URL
+  info_version: v0 (info.title "OpenAPI definition" — springdoc defaults, never customised)
+  policy_published: false
+  detail: lifecycle/moirailabs-com-lifecycle.yml
+error_envelope:
+  schema: 'ErrorResponse {code: string, message: string, details: string}'
+  media_type: application/json
+  observed: '{"code":"unauthorized","message":"Missing bearer token","details":null} with HTTP 401 from agent.moirailabs.com'
+  rfc9457: false
+  detail: errors/moirailabs-com-problem-types.yml
+rate_limits:
+  signaled: true
+  headers:
+  - Retry-After on 429 and on 202
+  status_on_exhaustion: 429
+  declared_on: 'create (POST /analytics/invocations) only: "Per-user active invocation quota or create rate limit
+    was exceeded"'
+  in_body: WalletProfilingResponse.rateLimit {limit, remaining, resetAt} and .quota {limit, reserved, used, remaining,
+    periodStart, periodEnd}
+  numbers_published: false
+  detail: rate-limits/moirailabs-com-rate-limits.yml
+cors:
+  observed_on: https://api.moirailabs.com/api/v1/plans/active
+  allow_methods: GET, POST, PUT, DELETE, OPTIONS
+  allow_headers: Origin, Content-Type, Accept, Authorization, X-Request-ID, Idempotency-Key, Prefer
+  expose_headers: X-Request-ID, Location, Retry-After, ETag, Content-Location, X-Analytics-Invocation-ID
+  note: ETag, Content-Location and X-Analytics-Invocation-ID are exposed by CORS but appear nowhere in the OpenAPI
+    — the runtime contract is wider than the published one.
+other_conventions:
+  ids: UUIDs for users, plans, subscriptions, contracts, invocations, wallet-profiling requests; contract identity
+    elsewhere is the 42-character 0x address plus chainId
+  dates: ISO date (YYYY-MM-DD) for analytics windows, date-time for timestamps
+  security_headers_observed:
+  - 'x-content-type-options: nosniff'
+  - 'x-frame-options: DENY'
+  - 'cache-control: no-cache, no-store, max-age=0, must-revalidate'
+cross_links:
+  authentication: authentication/moirailabs-com-authentication.yml
+  errors: errors/moirailabs-com-problem-types.yml
+  lifecycle: lifecycle/moirailabs-com-lifecycle.yml
+  rate_limits: rate-limits/moirailabs-com-rate-limits.yml
+  crosswalk: mcp/moirailabs-com-tool-crosswalk.yml

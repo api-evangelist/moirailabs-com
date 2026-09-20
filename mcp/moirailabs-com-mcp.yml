@@ -1,0 +1,139 @@
+generated: '2026-09-19'
+method: probed
+status: published
+source: https://moirailabs.com/.well-known/agent-card.json (capabilities.extensions[] uri https://api.moirailabs.com/mcp/v1,
+  params.endpoint http://agent.moirailabs.com/a2a/v1/mcp)
+docs: https://moirailabs.com/a2a
+summary: 'Moirai Labs ships one remote MCP surface: an "MCP bridge" mounted on the A2A agent host at https://agent.moirailabs.com/a2a/v1/mcp,
+  declared by the agent card as a vendor extension and by the /a2a page ("An MCP-compatible client (Claude Desktop,
+  Cursor, custom IDE) exposes MoiraiLabs as a tool ... with credit-aware rate limits ... Streaming responses (server-sent
+  events)"). It is bearer-gated: POST tools/list without a token returns HTTP 401 {"code":"unauthorized","message":"Missing
+  bearer token"}, so the live tool list and inputSchemas could not be read anonymously. The provider publishes no
+  MCP tool list anywhere else (llms.txt names no tools), so tools[] below is the A2A skill list the card publishes,
+  which the bridge most plausibly projects — marked as such, not as an observed tools/list.'
+deployment:
+  mode: remote
+  endpoint: https://agent.moirailabs.com/a2a/v1/mcp
+  install: null
+  package: null
+  auth: api-key
+  verified: probed
+  note: 'The card writes the endpoint as http://; the host 301s http->https, and the https form was probed. No stdio
+    package exists: npm, PyPI and the moirailabs GitHub org (0 public repos) were searched. auth is api-key in the
+    sense the rubric uses — a per-agent bearer token issued through the Moirai Labs dashboard, not an OAuth flow:
+    agent.moirailabs.com serves no oauth-protected-resource or oauth-authorization-server metadata (both 401), and
+    the 401 carries no WWW-Authenticate resource_metadata hint.'
+servers:
+- id: moirai-mcp-bridge
+  name: Moirai MCP bridge
+  endpoint: https://agent.moirailabs.com/a2a/v1/mcp
+  transport: streamable-http (SSE streaming per the /a2a page)
+  auth: bearer
+  status: live-gated
+  probe:
+    method: POST tools/list
+    request: '{"jsonrpc":"2.0","id":1,"method":"tools/list"} with Accept: application/json, text/event-stream'
+    http_status: 401
+    body: '{"code":"unauthorized","message":"Missing bearer token","details":null}'
+    www_authenticate: null
+    fetched: '2026-09-19'
+  related_probes:
+  - url: https://agent.moirailabs.com/.well-known/oauth-protected-resource
+    http_status: 401
+  - url: https://agent.moirailabs.com/.well-known/oauth-authorization-server
+    http_status: 401
+  - url: https://agent.moirailabs.com/docs
+    http_status: 401
+tools_source: a2a/moirailabs-com-agent-card.json skills[] — NOT an observed tools/list; input schemas require authenticated
+  introspection
+tools:
+- name: analytics.cohorts
+  id: analytics_cohorts
+  description: Cohort analytics for contract activity
+  tags:
+  - analytics
+  - cohorts
+  input_schema: unavailable anonymously (tools/list is bearer-gated); the REST binding in mcp/moirailabs-com-tool-crosswalk.yml
+    carries the real parameters
+- name: analytics.metrics
+  id: analytics_metrics
+  description: Aggregate metrics for contract transactions
+  tags:
+  - analytics
+  - metrics
+  input_schema: unavailable anonymously (tools/list is bearer-gated); the REST binding in mcp/moirailabs-com-tool-crosswalk.yml
+    carries the real parameters
+- name: analytics.methods
+  id: analytics_methods
+  description: Method-level analytics breakdown
+  tags:
+  - analytics
+  - methods
+  input_schema: unavailable anonymously (tools/list is bearer-gated); the REST binding in mcp/moirailabs-com-tool-crosswalk.yml
+    carries the real parameters
+- name: analytics.methods_by_cohorts
+  id: analytics_methods_by_cohorts
+  description: Method activity segmented by cohorts
+  tags:
+  - analytics
+  - methods
+  - cohorts
+  input_schema: unavailable anonymously (tools/list is bearer-gated); the REST binding in mcp/moirailabs-com-tool-crosswalk.yml
+    carries the real parameters
+- name: analytics.transactions
+  id: analytics_transactions
+  description: Transaction-level analytics feed
+  tags:
+  - analytics
+  - transactions
+  input_schema: unavailable anonymously (tools/list is bearer-gated); the REST binding in mcp/moirailabs-com-tool-crosswalk.yml
+    carries the real parameters
+- name: reports.daily
+  id: reports_daily
+  description: Daily aggregated contract report
+  tags:
+  - reports
+  - daily
+  input_schema: unavailable anonymously (tools/list is bearer-gated); the REST binding in mcp/moirailabs-com-tool-crosswalk.yml
+    carries the real parameters
+- name: reports.weekly
+  id: reports_weekly
+  description: Weekly aggregated contract report
+  tags:
+  - reports
+  - weekly
+  input_schema: unavailable anonymously (tools/list is bearer-gated); the REST binding in mcp/moirailabs-com-tool-crosswalk.yml
+    carries the real parameters
+- name: reports.monthly
+  id: reports_monthly
+  description: Monthly aggregated contract report
+  tags:
+  - reports
+  - monthly
+  input_schema: unavailable anonymously (tools/list is bearer-gated); the REST binding in mcp/moirailabs-com-tool-crosswalk.yml
+    carries the real parameters
+- name: contracts.register
+  id: contracts_register
+  description: Register a contract for analytics indexing
+  tags:
+  - contracts
+  - indexing
+  input_schema: unavailable anonymously (tools/list is bearer-gated); the REST binding in mcp/moirailabs-com-tool-crosswalk.yml
+    carries the real parameters
+- name: contracts.status
+  id: contracts_status
+  description: Check indexing status for a registered contract
+  tags:
+  - contracts
+  - status
+  input_schema: unavailable anonymously (tools/list is bearer-gated); the REST binding in mcp/moirailabs-com-tool-crosswalk.yml
+    carries the real parameters
+- name: mcp.bridge
+  id: mcp_bridge
+  description: Use vendor MCP bridge endpoint at /a2a/v1/mcp
+  tags:
+  - mcp
+  - vendor
+  input_schema: unavailable anonymously (tools/list is bearer-gated); the REST binding in mcp/moirailabs-com-tool-crosswalk.yml
+    carries the real parameters
+crosswalk: mcp/moirailabs-com-tool-crosswalk.yml

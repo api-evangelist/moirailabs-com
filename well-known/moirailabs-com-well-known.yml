@@ -1,0 +1,357 @@
+generated: '2026-09-19'
+method: probed
+source: Live GET probes of the closed /.well-known/* path list (plus /apis.json, /apis.yml, /openapi.json, /llms.txt)
+  on moirailabs.com, www.moirailabs.com, api.moirailabs.com and agent.moirailabs.com, 2026-09-19. Every row is a
+  request that was issued; every status is the one returned.
+summary:
+  hosts_probed: 4
+  documents_served: 5
+  served_on: moirailabs.com and www.moirailabs.com only
+  note: 'Moirai Labs serves an RFC 9116 security.txt, an OpenAI ai-plugin.json manifest, an A2A agent card, llms.txt
+    and an OpenAPI 3.0.1 document — all from the marketing apex. It serves NO OIDC/OAuth discovery, no RFC 9727
+    api-catalog, no APIs.json, no AAuth resource document. The API and agent hosts serve nothing anonymously: api.moirailabs.com
+    404s every path and agent.moirailabs.com 401s every path (its live agent-card URL times out).'
+hosts:
+- host: https://moirailabs.com
+  role: Marketing site, Lovable-built SPA on Cloudflare; static well-known files served with real 404s elsewhere
+  documents:
+  - path: /.well-known/security.txt
+    status: 200
+    content_type: text/plain; charset=utf-8
+    file: moirailabs-com-security.txt
+    standard: RFC 9116
+    note: Contact security@moirailabs.com, Expires 2027-05-05, Canonical set, Policy points at /privacy (the privacy
+      policy, not a disclosure policy).
+  - path: /.well-known/ai-plugin.json
+    status: 200
+    content_type: application/json
+    file: moirailabs-com-ai-plugin.json
+    standard: OpenAI plugin manifest (schema_version v1)
+    note: Names the OpenAPI at https://moirailabs.com/openapi.json, bearer user_http auth, contact hello@moirailabs.com,
+      and carries a non-standard "a2a" block pointing at the live agent card on agent.moirailabs.com.
+  - path: /.well-known/agent-card.json
+    status: 200
+    content_type: application/json
+    file: ../a2a/moirailabs-com-agent-card.json
+    standard: A2A 1.0.0 Agent Card
+    note: Captured and graded in a2a/moirailabs-com-a2a.yml.
+  - path: /llms.txt
+    status: 200
+    content_type: text/plain; charset=utf-8
+    file: ../llms/moirailabs-com-llms.txt
+    standard: llms.txt
+  - path: /openapi.json
+    status: 200
+    content_type: application/json
+    file: ../openapi/_original/moirailabs-com-openapi.json
+    standard: OpenAPI 3.0.1
+  - path: /.well-known/openid-configuration
+    status: 404
+    content_type: text/plain; charset=UTF-8
+    body_bytes: 9
+  - path: /.well-known/oauth-authorization-server
+    status: 404
+    content_type: text/plain; charset=UTF-8
+    body_bytes: 9
+  - path: /.well-known/oauth-protected-resource
+    status: 404
+    content_type: text/plain; charset=UTF-8
+    body_bytes: 9
+  - path: /.well-known/api-catalog
+    status: 404
+    content_type: text/plain; charset=UTF-8
+    body_bytes: 9
+  - path: /.well-known/api-catalog.json
+    status: 404
+    content_type: text/plain; charset=UTF-8
+    body_bytes: 9
+  - path: /.well-known/ucp.json
+    status: 404
+    content_type: text/plain; charset=UTF-8
+    body_bytes: 9
+  - path: /.well-known/acp.json
+    status: 404
+    content_type: text/plain; charset=UTF-8
+    body_bytes: 9
+  - path: /.well-known/aauth-resource.json
+    status: 404
+    content_type: text/plain; charset=UTF-8
+    body_bytes: 9
+  - path: /.well-known/apis.json
+    status: 404
+    content_type: text/plain; charset=UTF-8
+    body_bytes: 9
+  - path: /apis.json
+    status: 404
+    content_type: text/plain; charset=UTF-8
+    body_bytes: 9
+  - path: /apis.yml
+    status: 404
+    content_type: text/plain; charset=UTF-8
+    body_bytes: 9
+  - path: /.well-known/agent.json
+    status: 404
+    content_type: text/plain; charset=UTF-8
+    body_bytes: 9
+  path_echo_control:
+    path: /.well-known/moirailabs-com-negative-control-9c4e1b72.json
+    status: 404
+    result: passed
+  soft_404_control: Unknown /.well-known/* paths return a 9-byte text/plain 404, not the SPA shell; SPA routes (/pricing,
+    /docs, /status) DO return the 13,623-byte shell with 200, so only the well-known and root-file hits above are
+    real documents.
+- host: https://www.moirailabs.com
+  role: www alias — byte-identical responses and ETags to the apex
+  documents:
+  - path: /.well-known/security.txt
+    status: 200
+    content_type: text/plain; charset=utf-8
+    file: moirailabs-com-security.txt
+    standard: RFC 9116
+    note: Contact security@moirailabs.com, Expires 2027-05-05, Canonical set, Policy points at /privacy (the privacy
+      policy, not a disclosure policy).
+  - path: /.well-known/ai-plugin.json
+    status: 200
+    content_type: application/json
+    file: moirailabs-com-ai-plugin.json
+    standard: OpenAI plugin manifest (schema_version v1)
+    note: Names the OpenAPI at https://moirailabs.com/openapi.json, bearer user_http auth, contact hello@moirailabs.com,
+      and carries a non-standard "a2a" block pointing at the live agent card on agent.moirailabs.com.
+  - path: /.well-known/agent-card.json
+    status: 200
+    content_type: application/json
+    file: ../a2a/moirailabs-com-agent-card.json
+    standard: A2A 1.0.0 Agent Card
+    note: Captured and graded in a2a/moirailabs-com-a2a.yml.
+  - path: /llms.txt
+    status: 200
+    content_type: text/plain; charset=utf-8
+    file: ../llms/moirailabs-com-llms.txt
+    standard: llms.txt
+  - path: /openapi.json
+    status: 200
+    content_type: application/json
+    file: ../openapi/_original/moirailabs-com-openapi.json
+    standard: OpenAPI 3.0.1
+  - path: /.well-known/openid-configuration
+    status: 404
+    content_type: text/plain; charset=UTF-8
+    body_bytes: 9
+  - path: /.well-known/oauth-authorization-server
+    status: 404
+    content_type: text/plain; charset=UTF-8
+    body_bytes: 9
+  - path: /.well-known/oauth-protected-resource
+    status: 404
+    content_type: text/plain; charset=UTF-8
+    body_bytes: 9
+  - path: /.well-known/api-catalog
+    status: 404
+    content_type: text/plain; charset=UTF-8
+    body_bytes: 9
+  - path: /.well-known/api-catalog.json
+    status: 404
+    content_type: text/plain; charset=UTF-8
+    body_bytes: 9
+  - path: /.well-known/ucp.json
+    status: 404
+    content_type: text/plain; charset=UTF-8
+    body_bytes: 9
+  - path: /.well-known/acp.json
+    status: 404
+    content_type: text/plain; charset=UTF-8
+    body_bytes: 9
+  - path: /.well-known/aauth-resource.json
+    status: 404
+    content_type: text/plain; charset=UTF-8
+    body_bytes: 9
+  - path: /.well-known/apis.json
+    status: 404
+    content_type: text/plain; charset=UTF-8
+    body_bytes: 9
+  - path: /apis.json
+    status: 404
+    content_type: text/plain; charset=UTF-8
+    body_bytes: 9
+  - path: /apis.yml
+    status: 404
+    content_type: text/plain; charset=UTF-8
+    body_bytes: 9
+  - path: /.well-known/agent.json
+    status: 404
+    content_type: text/plain; charset=UTF-8
+    body_bytes: 9
+  path_echo_control:
+    path: /.well-known/moirailabs-com-negative-control-9c4e1b72.json
+    status: 404
+    result: passed
+  soft_404_control: Unknown /.well-known/* paths return a 9-byte text/plain 404, not the SPA shell; SPA routes (/pricing,
+    /docs, /status) DO return the 13,623-byte shell with 200, so only the well-known and root-file hits above are
+    real documents.
+- host: https://api.moirailabs.com
+  role: REST API host (OpenAPI servers[] http://api.moirailabs.com/api/v1; nginx, Spring Boot); GET /api/v1/plans/active
+    answers 200 anonymously
+  documents:
+  - path: /.well-known/security.txt
+    status: 404
+    content_type: text/html;charset=utf-8
+    body_bytes: 431
+  - path: /.well-known/openid-configuration
+    status: 404
+    content_type: text/html;charset=utf-8
+    body_bytes: 431
+  - path: /.well-known/oauth-authorization-server
+    status: 404
+    content_type: text/html;charset=utf-8
+    body_bytes: 431
+  - path: /.well-known/oauth-protected-resource
+    status: 404
+    content_type: text/html;charset=utf-8
+    body_bytes: 431
+  - path: /.well-known/api-catalog
+    status: 404
+    content_type: text/html;charset=utf-8
+    body_bytes: 431
+  - path: /.well-known/api-catalog.json
+    status: 404
+    content_type: text/html;charset=utf-8
+    body_bytes: 431
+  - path: /.well-known/ai-plugin.json
+    status: 404
+    content_type: text/html;charset=utf-8
+    body_bytes: 431
+  - path: /.well-known/ucp.json
+    status: 404
+    content_type: text/html;charset=utf-8
+    body_bytes: 431
+  - path: /.well-known/acp.json
+    status: 404
+    content_type: text/html;charset=utf-8
+    body_bytes: 431
+  - path: /.well-known/aauth-resource.json
+    status: 404
+    content_type: text/html;charset=utf-8
+    body_bytes: 431
+  - path: /.well-known/apis.json
+    status: 404
+    content_type: text/html;charset=utf-8
+    body_bytes: 431
+  - path: /apis.json
+    status: 404
+    content_type: text/html;charset=utf-8
+    body_bytes: 431
+  - path: /apis.yml
+    status: 404
+    content_type: text/html;charset=utf-8
+    body_bytes: 431
+  - path: /.well-known/agent-card.json
+    status: 404
+    content_type: text/html;charset=utf-8
+    body_bytes: 431
+  - path: /.well-known/agent.json
+    status: 404
+    content_type: text/html;charset=utf-8
+    body_bytes: 431
+  - path: /openapi.json
+    status: 404
+    content_type: text/html;charset=utf-8
+    body_bytes: 431
+  - path: /v3/api-docs
+    status: 404
+    content_type: text/html;charset=utf-8
+    body_bytes: 431
+  - path: /api/v1/openapi.json
+    status: 403
+    content_type: text/html;charset=utf-8
+    body_bytes: 431
+  path_echo_control:
+    path: /.well-known/moirailabs-com-negative-control-9c4e1b72.json
+    status: 404
+    result: passed
+  note: No discovery documents at all on the API host. The published OpenAPI lives on the marketing apex, not here.
+    No RFC 9728 protected-resource metadata and no RFC 8414 authorization-server metadata, consistent with the bearer-JWT
+    scheme having no OAuth flow.
+- host: https://agent.moirailabs.com
+  role: A2A + MCP host named by the agent card (agent.moirailabs.com/a2a/rpc, /a2a, /a2a/v1/mcp); the RFC 9728 resource
+    server for the MCP bridge
+  documents:
+  - path: /.well-known/security.txt
+    status: 401
+    content_type: application/json;charset=ISO-8859-1
+    body_bytes: 71
+  - path: /.well-known/openid-configuration
+    status: 401
+    content_type: application/json;charset=ISO-8859-1
+    body_bytes: 71
+  - path: /.well-known/oauth-authorization-server
+    status: 401
+    content_type: application/json;charset=ISO-8859-1
+    body_bytes: 71
+  - path: /.well-known/oauth-protected-resource
+    status: 401
+    content_type: application/json;charset=ISO-8859-1
+    body_bytes: 71
+  - path: /.well-known/api-catalog
+    status: 401
+    content_type: application/json;charset=ISO-8859-1
+    body_bytes: 71
+  - path: /.well-known/api-catalog.json
+    status: 401
+    content_type: application/json;charset=ISO-8859-1
+    body_bytes: 71
+  - path: /.well-known/ai-plugin.json
+    status: 401
+    content_type: application/json;charset=ISO-8859-1
+    body_bytes: 71
+  - path: /.well-known/ucp.json
+    status: 401
+    content_type: application/json;charset=ISO-8859-1
+    body_bytes: 71
+  - path: /.well-known/acp.json
+    status: 401
+    content_type: application/json;charset=ISO-8859-1
+    body_bytes: 71
+  - path: /.well-known/aauth-resource.json
+    status: 401
+    content_type: application/json;charset=ISO-8859-1
+    body_bytes: 71
+  - path: /.well-known/apis.json
+    status: 401
+    content_type: application/json;charset=ISO-8859-1
+    body_bytes: 71
+  - path: /apis.json
+    status: 401
+    content_type: application/json;charset=ISO-8859-1
+    body_bytes: 71
+  - path: /apis.yml
+    status: 401
+    content_type: application/json;charset=ISO-8859-1
+    body_bytes: 71
+  - path: /.well-known/agent.json
+    status: 401
+    content_type: application/json;charset=ISO-8859-1
+    body_bytes: 71
+  - path: /llms.txt
+    status: 401
+    content_type: application/json;charset=ISO-8859-1
+    body_bytes: 71
+  - path: /docs
+    status: 401
+    content_type: application/json;charset=ISO-8859-1
+    body_bytes: 71
+  - path: /openapi.json
+    status: 401
+    content_type: application/json;charset=ISO-8859-1
+    body_bytes: 71
+  - path: /.well-known/agent-card.json
+    status: 0
+    note: Timed out with 0 bytes after 30s on three attempts (https, https ignoring TLS errors, http->301->https).
+      This is the URL the card, llms.txt and ai-plugin.json all call the live card.
+  path_echo_control:
+    path: /.well-known/moirailabs-com-negative-control-9c4e1b72.json
+    status: 401
+    result: passed (401, not 2xx)
+  note: A bearer gate covers the entire path space including /.well-known/, so RFC 9728 oauth-protected-resource
+    metadata — which MUST be readable anonymously for a client to discover the authorization server — is unreadable
+    even if it exists. Every response is {"code":"unauthorized","message":"Missing bearer token","details":null}.
+    Recorded as 401 (gated), not as absent.

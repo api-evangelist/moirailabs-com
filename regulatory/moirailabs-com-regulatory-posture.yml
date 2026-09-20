@@ -1,0 +1,81 @@
+generated: '2026-09-19'
+method: searched
+probe: true
+source: https://moirailabs.com/privacy (Last updated 13 April 2025), https://moirailabs.com/terms (Effective 06
+  April 2025), https://moirailabs.com/.well-known/security.txt, plus conventional-path probes on 2026-09-19
+note: 'Moirai Labs is a Lovable-built SPA: every route answers 200 with the same 13,623-byte shell, so the probes
+  below were read from the compiled application text (assets/index-BW_u21el.js), not from server-rendered pages.
+  Only signals whose substance appears in that text are recorded. No SBOM, accessibility statement, subprocessor
+  table, data-residency page, transparency report, AI-transparency page or GPC statement exists.'
+signals:
+  data_subject_request:
+    url: https://moirailabs.com/privacy
+    section: 5. Data Storage and Retention; 7. International Users and Data Rights
+    channel: hello@moirailabs.com
+    stated_sla: your personal data will be removed promptly
+    rights_named:
+    - access
+    - correct
+    - delete
+    - (GDPR / CCPA rights for EEA and California residents)
+    evidence:
+    - source: https://moirailabs.com/privacy
+      http_status: 200
+      fetched: '2026-09-19'
+      quote: You can request to delete your account at any time by contacting us at hello@moirailabs.com, and your
+        personal data will be removed promptly.
+    - source: https://moirailabs.com/privacy
+      http_status: 200
+      fetched: '2026-09-19'
+      quote: 'We serve users globally, including from the EU, US, and Asia. If you are a resident of the European
+        Economic Area (EEA) or California, you may have specific rights under GDPR or CCPA, including: The right
+        to access, correct, or delete your data'
+    note: A documented request channel with a verbatim (non-numeric) response commitment inside the privacy policy.
+      No dedicated intake page (/privacy/requests is the SPA shell) and no API endpoint; the API itself exposes
+      no delete-user operation.
+probed_absent:
+- signal: accessibility_conformance
+  urls:
+  - url: https://moirailabs.com/accessibility
+    status: 200
+    note: SPA shell, no route
+- signal: subprocessors
+  urls:
+  - url: https://moirailabs.com/legal/subprocessors
+    status: 200
+    note: SPA shell, no route
+  note: The privacy policy names payment processors only generically ("third-party providers"); the compiled app
+    reveals Supabase, Google Analytics (G-K9X38T82H6), Featurebase and Loops, but a list inferred from a bundle
+    is not a published subprocessor list.
+- signal: sbom
+  urls:
+  - url: https://moirailabs.com/security/sbom
+    status: 200
+    note: SPA shell
+- signal: data_residency
+  note: no docs site; not mentioned in privacy policy beyond "We serve users globally"
+- signal: transparency_report
+  urls:
+  - url: https://moirailabs.com/transparency
+    status: 200
+    note: SPA shell
+- signal: ai_transparency
+  urls:
+  - url: https://moirailabs.com/ai/transparency
+    status: 200
+    note: SPA shell
+  note: The product is marketed as an AI agent but no disclosure statement about AI-generated output exists
+- signal: global_privacy_control
+  note: privacy policy section 8 says only that cookies can be disabled in the browser; no GPC statement
+- signal: age_assurance
+  note: Terms section 1 requires users to be at least 18; a contractual age floor, not an assurance mechanism
+- signal: incident_notification
+  note: no DPA published; privacy policy commits to notify of policy changes, not incidents
+- signal: support_lifetime
+  note: no versioning or support-period statement
+- signal: notice_and_action
+  note: not applicable — no user-generated content surface; nothing published
+- signal: exit_assistance
+  note: no export/portability documentation; the API has no bulk export operation
+- signal: training_data_summary
+  note: nothing published

@@ -1,0 +1,105 @@
+overlay: 1.0.0
+info:
+  title: API Evangelist enhancements for the Moirai Labs API
+  version: '2026-09-19'
+extends: moirailabs-com-openapi.yml
+x-generated: '2026-09-19'
+x-method: generated
+x-source: Derived from the harvested spec plus observed runtime behaviour (https redirect, CORS-exposed headers,
+  live 401 envelope). The original openapi/ file is never mutated; apply this overlay to obtain the enhanced view.
+actions:
+- target: $.info
+  update:
+    title: Moirai Labs API
+    description: 'Smart-contract analytics for EVM chains (Ethereum, Polygon, Arbitrum, Optimism, Base, Linea):
+      contract registration and sync status, cohort/method/metrics analytics (synchronous and as durable idempotent
+      invocations), daily reports, wallet profiling, plans and subscriptions. Bearer JWT issued via the Moirai Labs
+      dashboard; credit-metered. Published at https://moirailabs.com/openapi.json.'
+    contact:
+      name: Moirai Labs
+      email: hello@moirailabs.com
+      url: https://moirailabs.com
+    termsOfService: https://moirailabs.com/terms
+    x-security-contact: security@moirailabs.com
+- target: $.servers[0]
+  update:
+    url: https://api.moirailabs.com/api/v1
+    description: Production (TLS; the published http:// URL 301s here)
+- target: $
+  update:
+    tags:
+    - name: user-info-controller
+      description: Users and registration status
+    - name: subscription-controller
+      description: Subscriptions and wallet-profiling quota
+    - name: plan-controller
+      description: Plan catalog (GET /plans/active is anonymous) and admin plan management
+    - name: contract-info-controller
+      description: Register, read, sync-check and delete contracts under analysis
+    - name: analytics-controller
+      description: 'Synchronous analytics: metrics, methods, cohorts, cohort transactions, dashboards, tokens'
+    - name: analytics-invocation-controller
+      description: Durable asynchronous analytics invocations with Idempotency-Key and Prefer negotiation
+    - name: wallet-profiling-controller
+      description: Credit-metered wallet classification
+    - name: functions-controller
+      description: Wallet token balances
+    - name: report-controller
+      description: Daily aggregated contract reports
+- target: $.paths['/analytics/invocations'].post.parameters[?(@.name=='Idempotency-Key')]
+  update:
+    description: Client-generated unique key. Reusing a key with a different request, or after the invocation is
+      no longer reusable, returns 409; a reused key whose stored result has expired returns 410. Retention window
+      is not published.
+- target: $.paths['/analytics/invocations'].post.parameters[?(@.name=='Prefer')]
+  update:
+    description: 'RFC 7240 preference: `wait=N` blocks up to N seconds and returns 200 if the calculation finishes;
+      `respond-async` returns 202 immediately with Location and Retry-After.'
+    schema:
+      type: string
+      example: respond-async
+- target: $.paths['/analytics/invocations'].post.responses['429']
+  update:
+    x-rate-limit:
+      scope: per-user
+      signal: Retry-After
+      numbers_published: false
+- target: $.paths['/plans/active'].get
+  update:
+    x-anonymous: true
+    x-observed:
+      date: '2026-09-19'
+      status: 200
+      note: Returned four active plans; see plans/moirailabs-com-plans-pricing.yml
+- target: $.paths['/plans/{id}'].put
+  update:
+    x-note: 'Description says PUT is available only for ADMIN, but the operation declares security: [] (anonymous).
+      Treat the declaration as unreliable for the plan-controller writes.'
+- target: $.components.schemas.ErrorResponse
+  update:
+    description: 'Vendor error envelope used across the API (observed: {"code":"unauthorized","message":"Missing
+      bearer token","details":null}). Not RFC 9457.'
+    example:
+      code: unauthorized
+      message: Missing bearer token
+      details: null
+- target: $.components.securitySchemes.bearerAuth
+  update:
+    description: JWT issued by the Moirai Labs dashboard (Supabase-backed sign-in with email, Google or GitHub).
+      No OAuth authorization server or token endpoint is published; there is no scope model — access is credit-
+      and plan-metered.
+- target: $
+  update:
+    x-agent-surfaces:
+      a2a: https://agent.moirailabs.com/a2a/rpc
+      mcp: https://agent.moirailabs.com/a2a/v1/mcp
+      agent_card: https://moirailabs.com/.well-known/agent-card.json
+      ai_plugin: https://moirailabs.com/.well-known/ai-plugin.json
+      llms_txt: https://moirailabs.com/llms.txt
+    x-cors-exposed-headers:
+    - X-Request-ID
+    - Location
+    - Retry-After
+    - ETag
+    - Content-Location
+    - X-Analytics-Invocation-ID

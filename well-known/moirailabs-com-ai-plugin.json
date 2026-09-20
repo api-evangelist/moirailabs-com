@@ -1,0 +1,22 @@
+{
+  "schema_version": "v1",
+  "name_for_human": "Moirai Labs AI",
+  "name_for_model": "moirai_labs",
+  "description_for_human": "Smart-contract analytics for Web3. Query on-chain metrics, cohorts, and method-level data via Moirai Labs AI.",
+  "description_for_model": "Use the Moirai Labs API to retrieve smart-contract analytics across multiple EVM chains. Supports product metrics, cohort analysis, method-call breakdowns, and aggregated dashboards. All endpoints are credit-metered and require a Bearer token.",
+  "auth": {
+    "type": "user_http",
+    "authorization_type": "bearer"
+  },
+  "api": {
+    "type": "openapi",
+    "url": "https://moirailabs.com/openapi.json",
+    "is_user_authenticated": true
+  },
+  "logo_url": "https://moirailabs.com/og-image.png",
+  "contact_email": "hello@moirailabs.com",
+  "legal_info_url": "https://moirailabs.com/terms",
+  "a2a": {
+    "agent_card_url": "https://agent.moirailabs.com/.well-known/agent-card.json"
+  }
+}
