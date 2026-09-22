@@ -23,6 +23,19 @@ tags:
 - Smart Contracts
 - Web3
 - Analytics
+- cohort-analysis
+- Wallet Profiling
+- Ethereum
+- AI Agents
+- A2A
+- MCP
+- agent-native
+tags_raw:
+- Company
+- Blockchain
+- Smart Contracts
+- Web3
+- Analytics
 - Cohort Analysis
 - Wallet Profiling
 - Ethereum
@@ -41,6 +54,12 @@ apis:
   humanURL: https://moirailabs.com/a2a
   baseURL: https://api.moirailabs.com/api/v1
   tags:
+  - Smart Contracts
+  - Analytics
+  - cohort-analysis
+  - Wallet Profiling
+  - Blockchain
+  tags_raw:
   - Smart Contracts
   - Analytics
   - Cohort Analysis
