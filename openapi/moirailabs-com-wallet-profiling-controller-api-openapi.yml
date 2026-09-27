@@ -1,0 +1,317 @@
+openapi: 3.2.0
+info:
+  title: Moirailabs Com Wallet Profiling Controller API
+  version: v0
+  description: 'Operations tagged wallet-profiling-controller across 2 of this provider''s published API definitions: moirailabs-com-openapi.json, moirailabs-com-openapi.yml. Each path carries the servers of the definition it was published in.'
+servers:
+- url: http://api.moirailabs.com/api/v1
+  description: Generated server url
+security:
+- bearerAuth: []
+tags:
+- name: wallet-profiling-controller
+paths:
+  /wallet-profiling/simple:
+    post:
+      tags:
+      - wallet-profiling-controller
+      operationId: simpleProfile
+      parameters:
+      - name: X-Request-ID
+        in: header
+        description: Optional frontend-generated correlation ID. The backend returns the effective value in the response header.
+        required: false
+        schema:
+          maxLength: 128
+          minLength: 1
+          pattern: ^[A-Za-z0-9._:-]{1,128}$
+          type: string
+          example: 8df31080-3b78-4e63-a67d-c2d107190f3c
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WalletProfilingSimpleRequest'
+        required: true
+      responses:
+        '200':
+          description: OK
+          headers:
+            X-Request-ID:
+              description: Effective request correlation ID used by backend audit logging.
+              schema:
+                maxLength: 128
+                minLength: 1
+                pattern: ^[A-Za-z0-9._:-]{1,128}$
+                type: string
+                example: 8df31080-3b78-4e63-a67d-c2d107190f3c
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/WalletProfilingResponse'
+      summary: Simple profile
+      x-summary-source: derived
+    servers:
+    - url: http://api.moirailabs.com/api/v1
+      description: Generated server url
+  /wallet-profiling/enriched:
+    post:
+      tags:
+      - wallet-profiling-controller
+      operationId: enrichedProfile
+      parameters:
+      - name: Idempotency-Key
+        in: header
+        required: false
+        schema:
+          type: string
+      - name: X-Request-ID
+        in: header
+        description: Optional frontend-generated correlation ID. The backend returns the effective value in the response header.
+        required: false
+        schema:
+          maxLength: 128
+          minLength: 1
+          pattern: ^[A-Za-z0-9._:-]{1,128}$
+          type: string
+          example: 8df31080-3b78-4e63-a67d-c2d107190f3c
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WalletProfilingEnrichedRequest'
+        required: true
+      responses:
+        '200':
+          description: OK
+          headers:
+            X-Request-ID:
+              description: Effective request correlation ID used by backend audit logging.
+              schema:
+                maxLength: 128
+                minLength: 1
+                pattern: ^[A-Za-z0-9._:-]{1,128}$
+                type: string
+                example: 8df31080-3b78-4e63-a67d-c2d107190f3c
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/WalletProfilingResponse'
+      summary: Enriched profile
+      x-summary-source: derived
+    servers:
+    - url: http://api.moirailabs.com/api/v1
+      description: Generated server url
+  /wallet-profiling/requests/{requestId}:
+    get:
+      tags:
+      - wallet-profiling-controller
+      operationId: getRequestStatus
+      parameters:
+      - name: requestId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: X-Request-ID
+        in: header
+        description: Optional frontend-generated correlation ID. The backend returns the effective value in the response header.
+        required: false
+        schema:
+          maxLength: 128
+          minLength: 1
+          pattern: ^[A-Za-z0-9._:-]{1,128}$
+          type: string
+          example: 8df31080-3b78-4e63-a67d-c2d107190f3c
+      responses:
+        '200':
+          description: OK
+          headers:
+            X-Request-ID:
+              description: Effective request correlation ID used by backend audit logging.
+              schema:
+                maxLength: 128
+                minLength: 1
+                pattern: ^[A-Za-z0-9._:-]{1,128}$
+                type: string
+                example: 8df31080-3b78-4e63-a67d-c2d107190f3c
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/WalletProfilingResponse'
+      summary: Get request status
+      x-summary-source: derived
+    servers:
+    - url: http://api.moirailabs.com/api/v1
+      description: Generated server url
+  /subscriptions/current/wallet-profiling-quota:
+    get:
+      tags:
+      - wallet-profiling-controller
+      operationId: getCurrentQuota
+      parameters:
+      - name: X-Request-ID
+        in: header
+        description: Optional frontend-generated correlation ID. The backend returns the effective value in the response header.
+        required: false
+        schema:
+          maxLength: 128
+          minLength: 1
+          pattern: ^[A-Za-z0-9._:-]{1,128}$
+          type: string
+          example: 8df31080-3b78-4e63-a67d-c2d107190f3c
+      responses:
+        '200':
+          description: OK
+          headers:
+            X-Request-ID:
+              description: Effective request correlation ID used by backend audit logging.
+              schema:
+                maxLength: 128
+                minLength: 1
+                pattern: ^[A-Za-z0-9._:-]{1,128}$
+                type: string
+                example: 8df31080-3b78-4e63-a67d-c2d107190f3c
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/WalletProfilingQuotaResponse'
+      summary: Get current quota
+      x-summary-source: derived
+    servers:
+    - url: http://api.moirailabs.com/api/v1
+      description: Generated server url
+components:
+  schemas:
+    WalletProfilingSimpleRequest:
+      required:
+      - chainId
+      - walletAddress
+      type: object
+      properties:
+        walletAddress:
+          type: string
+        chainId:
+          type: integer
+          format: int32
+    WalletProfilingResponse:
+      type: object
+      properties:
+        mode:
+          type: string
+        chainId:
+          type: integer
+          format: int32
+        walletAddress:
+          type: string
+        requestId:
+          type: string
+          format: uuid
+        status:
+          type: string
+        classificationAvailable:
+          type: boolean
+        dataPreparationRequired:
+          type: boolean
+        quota:
+          $ref: '#/components/schemas/WalletProfilingQuotaResponse'
+        billing:
+          $ref: '#/components/schemas/WalletProfilingBillingResponse'
+        quality:
+          $ref: '#/components/schemas/WalletProfilingQualityResponse'
+        rateLimit:
+          $ref: '#/components/schemas/WalletProfilingRateLimitResponse'
+        classes:
+          type: array
+          items:
+            $ref: '#/components/schemas/WalletProfilingClassResponse'
+    WalletProfilingRateLimitResponse:
+      type: object
+      properties:
+        limit:
+          type: integer
+          format: int32
+        remaining:
+          type: integer
+          format: int32
+        resetAt:
+          type: string
+          format: date-time
+    WalletProfilingClassResponse:
+      type: object
+      properties:
+        className:
+          type: string
+        confidence:
+          type: number
+          format: double
+        scores:
+          type: object
+          additionalProperties:
+            type: object
+        explanation:
+          type: object
+          additionalProperties:
+            type: object
+    WalletProfilingBillingResponse:
+      type: object
+      properties:
+        productUnits:
+          type: integer
+          format: int32
+        productPricingUnit:
+          type: string
+        chargeStatus:
+          type: string
+    WalletProfilingQuotaResponse:
+      type: object
+      properties:
+        limit:
+          type: integer
+          format: int32
+        reserved:
+          type: integer
+          format: int32
+        used:
+          type: integer
+          format: int32
+        remaining:
+          type: integer
+          format: int32
+        periodStart:
+          type: string
+          format: date-time
+        periodEnd:
+          type: string
+          format: date-time
+    WalletProfilingQualityResponse:
+      type: object
+      properties:
+        classificationMode:
+          type: string
+        enrichedDataUsed:
+          type: boolean
+        dataPreparationRequired:
+          type: boolean
+    WalletProfilingEnrichedRequest:
+      required:
+      - chainId
+      - walletAddress
+      type: object
+      properties:
+        walletAddress:
+          type: string
+        chainId:
+          type: integer
+          format: int32
+        forceRefresh:
+          type: boolean
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+x-refined-from:
+- moirailabs-com-openapi.json
+- moirailabs-com-openapi.yml

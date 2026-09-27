@@ -1,0 +1,982 @@
+openapi: 3.2.0
+info:
+  title: Moirailabs Com Analytics Controller API
+  version: v0
+  description: 'Operations tagged analytics-controller across 2 of this provider''s published API definitions: moirailabs-com-openapi.json, moirailabs-com-openapi.yml. Each path carries the servers of the definition it was published in.'
+servers:
+- url: http://api.moirailabs.com/api/v1
+  description: Generated server url
+security:
+- bearerAuth: []
+tags:
+- name: analytics-controller
+paths:
+  /analytics/tokens:
+    get:
+      tags:
+      - analytics-controller
+      summary: GET info about tokens on contract
+      description: GET-method to retrieve info about tokens on contract. User can receive this info only if this contract was registered by him
+      operationId: getTokenAnalysis
+      parameters:
+      - name: contractId
+        in: query
+        required: true
+        schema:
+          type: string
+      - name: X-Request-ID
+        in: header
+        description: Optional frontend-generated correlation ID. The backend returns the effective value in the response header.
+        required: false
+        schema:
+          maxLength: 128
+          minLength: 1
+          pattern: ^[A-Za-z0-9._:-]{1,128}$
+          type: string
+          example: 8df31080-3b78-4e63-a67d-c2d107190f3c
+      responses:
+        '200':
+          description: OK
+          headers:
+            X-Request-ID:
+              description: Effective request correlation ID used by backend audit logging.
+              schema:
+                maxLength: 128
+                minLength: 1
+                pattern: ^[A-Za-z0-9._:-]{1,128}$
+                type: string
+                example: 8df31080-3b78-4e63-a67d-c2d107190f3c
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/TokenAnalysisResponse'
+    servers:
+    - url: http://api.moirailabs.com/api/v1
+      description: Generated server url
+  /analytics/product-dashboard:
+    get:
+      tags:
+      - analytics-controller
+      summary: Get product analytics dashboard
+      description: Returns product analytics for a contract registered by the authenticated user.
+      operationId: getProductDashboard
+      parameters:
+      - name: contractAddress
+        in: query
+        required: true
+        schema:
+          type: string
+      - name: chainId
+        in: query
+        required: false
+        schema:
+          type: integer
+          format: int32
+      - name: chain
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: dateFrom
+        in: query
+        required: true
+        schema:
+          type: string
+          format: date
+      - name: dateTo
+        in: query
+        required: true
+        schema:
+          type: string
+          format: date
+      - name: compareDateFrom
+        in: query
+        required: false
+        schema:
+          type: string
+          format: date
+      - name: compareDateTo
+        in: query
+        required: false
+        schema:
+          type: string
+          format: date
+      - name: granularity
+        in: query
+        required: false
+        schema:
+          type: string
+          default: day
+      - name: status
+        in: query
+        required: false
+        schema:
+          type: string
+          default: all
+      - name: topLimit
+        in: query
+        required: false
+        schema:
+          type: integer
+          format: int32
+          default: 8
+      - name: X-Request-ID
+        in: header
+        description: Optional frontend-generated correlation ID. The backend returns the effective value in the response header.
+        required: false
+        schema:
+          maxLength: 128
+          minLength: 1
+          pattern: ^[A-Za-z0-9._:-]{1,128}$
+          type: string
+          example: 8df31080-3b78-4e63-a67d-c2d107190f3c
+      responses:
+        '200':
+          description: OK
+          headers:
+            X-Request-ID:
+              description: Effective request correlation ID used by backend audit logging.
+              schema:
+                maxLength: 128
+                minLength: 1
+                pattern: ^[A-Za-z0-9._:-]{1,128}$
+                type: string
+                example: 8df31080-3b78-4e63-a67d-c2d107190f3c
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ProductAnalyticsDashboardResponse'
+        '202':
+          description: Blockchain indexing or dashboard preparation is still running; retry after the advertised delay
+          headers:
+            Retry-After:
+              description: Delay in seconds before the next dashboard request
+              schema:
+                minimum: 1
+                type: integer
+                format: int32
+            X-Product-Analytics-Status:
+              description: Current preparation phase
+              schema:
+                type: string
+                enum:
+                - queued
+                - syncing
+            X-Product-Analytics-Preparation-Id:
+              description: Stable preparation job identifier
+              schema:
+                type: string
+                format: uuid
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProductAnalyticsDashboardResponse'
+    servers:
+    - url: http://api.moirailabs.com/api/v1
+      description: Generated server url
+  /analytics/metrics:
+    get:
+      tags:
+      - analytics-controller
+      summary: Calculate Metrics
+      description: 'GET-method to calculate total transactions
+
+        unique wallets
+
+        DAU
+
+        MAU
+
+        Total Retention rate
+
+        Total Churn Rate. User can receive this info only if this contract was registered by him'
+      operationId: getProductMetrics
+      parameters:
+      - name: contractAddress
+        in: query
+        required: true
+        schema:
+          type: string
+      - name: X-Request-ID
+        in: header
+        description: Optional frontend-generated correlation ID. The backend returns the effective value in the response header.
+        required: false
+        schema:
+          maxLength: 128
+          minLength: 1
+          pattern: ^[A-Za-z0-9._:-]{1,128}$
+          type: string
+          example: 8df31080-3b78-4e63-a67d-c2d107190f3c
+      responses:
+        '200':
+          description: OK
+          headers:
+            X-Request-ID:
+              description: Effective request correlation ID used by backend audit logging.
+              schema:
+                maxLength: 128
+                minLength: 1
+                pattern: ^[A-Za-z0-9._:-]{1,128}$
+                type: string
+                example: 8df31080-3b78-4e63-a67d-c2d107190f3c
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ProductMetricsResponse'
+    servers:
+    - url: http://api.moirailabs.com/api/v1
+      description: Generated server url
+  /analytics/methods:
+    get:
+      tags:
+      - analytics-controller
+      summary: Calculate used methods
+      description: GET-method to calculate usage of methods. User can receive this info only if this contract was registered by him
+      operationId: getMethodAnalysis
+      parameters:
+      - name: contractAddress
+        in: query
+        required: true
+        schema:
+          type: string
+      - name: X-Request-ID
+        in: header
+        description: Optional frontend-generated correlation ID. The backend returns the effective value in the response header.
+        required: false
+        schema:
+          maxLength: 128
+          minLength: 1
+          pattern: ^[A-Za-z0-9._:-]{1,128}$
+          type: string
+          example: 8df31080-3b78-4e63-a67d-c2d107190f3c
+      responses:
+        '200':
+          description: OK
+          headers:
+            X-Request-ID:
+              description: Effective request correlation ID used by backend audit logging.
+              schema:
+                maxLength: 128
+                minLength: 1
+                pattern: ^[A-Za-z0-9._:-]{1,128}$
+                type: string
+                example: 8df31080-3b78-4e63-a67d-c2d107190f3c
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/MethodAnalysisResponse'
+    servers:
+    - url: http://api.moirailabs.com/api/v1
+      description: Generated server url
+  /analytics/dashboard:
+    get:
+      tags:
+      - analytics-controller
+      summary: Get full analytics dashboard payload
+      description: Legacy batch endpoint used by the current dashboard initial load.
+      operationId: getDashboardAnalytics
+      parameters:
+      - name: contractAddress
+        in: query
+        required: true
+        schema:
+          type: string
+      - name: startDate
+        in: query
+        required: false
+        schema:
+          type: string
+          format: date
+      - name: endDate
+        in: query
+        required: false
+        schema:
+          type: string
+          format: date
+      - name: interval
+        in: query
+        required: false
+        schema:
+          type: string
+          default: weekly
+      - name: granularity
+        in: query
+        required: false
+        schema:
+          type: string
+          default: day
+      - name: X-Request-ID
+        in: header
+        description: Optional frontend-generated correlation ID. The backend returns the effective value in the response header.
+        required: false
+        schema:
+          maxLength: 128
+          minLength: 1
+          pattern: ^[A-Za-z0-9._:-]{1,128}$
+          type: string
+          example: 8df31080-3b78-4e63-a67d-c2d107190f3c
+      responses:
+        '200':
+          description: OK
+          headers:
+            X-Request-ID:
+              description: Effective request correlation ID used by backend audit logging.
+              schema:
+                maxLength: 128
+                minLength: 1
+                pattern: ^[A-Za-z0-9._:-]{1,128}$
+                type: string
+                example: 8df31080-3b78-4e63-a67d-c2d107190f3c
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/DashboardAnalyticsResponse'
+    servers:
+    - url: http://api.moirailabs.com/api/v1
+      description: Generated server url
+  /analytics/cohorts:
+    get:
+      tags:
+      - analytics-controller
+      summary: Calculate Cohort Analysis
+      description: GET-method to calculate cohort data based on parameters about contract. User can receive this info only if this contract was registered by him.
+      operationId: getCohortAnalysis
+      parameters:
+      - name: Authorization
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: contractAddress
+        in: query
+        required: true
+        schema:
+          type: string
+      - name: interval
+        in: query
+        required: true
+        schema:
+          type: string
+      - name: startDate
+        in: query
+        required: true
+        schema:
+          type: string
+          format: date
+      - name: endDate
+        in: query
+        required: true
+        schema:
+          type: string
+          format: date
+      - name: X-Request-ID
+        in: header
+        description: Optional frontend-generated correlation ID. The backend returns the effective value in the response header.
+        required: false
+        schema:
+          maxLength: 128
+          minLength: 1
+          pattern: ^[A-Za-z0-9._:-]{1,128}$
+          type: string
+          example: 8df31080-3b78-4e63-a67d-c2d107190f3c
+      responses:
+        '200':
+          description: OK
+          headers:
+            X-Request-ID:
+              description: Effective request correlation ID used by backend audit logging.
+              schema:
+                maxLength: 128
+                minLength: 1
+                pattern: ^[A-Za-z0-9._:-]{1,128}$
+                type: string
+                example: 8df31080-3b78-4e63-a67d-c2d107190f3c
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/CohortAnalysisResponse'
+    servers:
+    - url: http://api.moirailabs.com/api/v1
+      description: Generated server url
+  /analytics/cohort-transactions:
+    get:
+      tags:
+      - analytics-controller
+      summary: GET info about tokens on contract
+      description: GET-method to retrieve info about tokens on contract. User can receive this info only if this contract was registered by him
+      operationId: getCohortTransactions
+      parameters:
+      - name: contractAddress
+        in: query
+        required: true
+        schema:
+          type: string
+      - name: period
+        in: query
+        required: true
+        schema:
+          type: string
+      - name: granularity
+        in: query
+        required: true
+        schema:
+          type: string
+      - name: X-Request-ID
+        in: header
+        description: Optional frontend-generated correlation ID. The backend returns the effective value in the response header.
+        required: false
+        schema:
+          maxLength: 128
+          minLength: 1
+          pattern: ^[A-Za-z0-9._:-]{1,128}$
+          type: string
+          example: 8df31080-3b78-4e63-a67d-c2d107190f3c
+      responses:
+        '200':
+          description: OK
+          headers:
+            X-Request-ID:
+              description: Effective request correlation ID used by backend audit logging.
+              schema:
+                maxLength: 128
+                minLength: 1
+                pattern: ^[A-Za-z0-9._:-]{1,128}$
+                type: string
+                example: 8df31080-3b78-4e63-a67d-c2d107190f3c
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/CohortTransactionResponse'
+    servers:
+    - url: http://api.moirailabs.com/api/v1
+      description: Generated server url
+components:
+  schemas:
+    ProductRiskSummary:
+      type: object
+      properties:
+        failureRatePct:
+          type: number
+          format: double
+        failedGasFeeNative:
+          type: number
+          format: double
+        worstMethodFailureRatePct:
+          type: number
+          format: double
+        gasSpikeMultiplier:
+          type: number
+          format: double
+        failedGasByMethod:
+          type: array
+          items:
+            $ref: '#/components/schemas/ProductMethodPerformance'
+    TransactionWithCohort:
+      type: object
+      properties:
+        txHash:
+          type: string
+        blockNumber:
+          type: integer
+          format: int64
+        timestamp:
+          type: string
+          format: date-time
+        from:
+          type: string
+        to:
+          type: string
+        value:
+          type: number
+        gasUsed:
+          type: integer
+          format: int64
+        gasPrice:
+          type: integer
+          format: int64
+        contractAddress:
+          type: string
+        functionName:
+          type: string
+        method:
+          type: string
+        nonce:
+          type: integer
+          format: int64
+        blockHash:
+          type: string
+        transactionIndex:
+          type: integer
+          format: int32
+        isError:
+          type: integer
+          format: int32
+        txreceiptStatus:
+          type: integer
+          format: int32
+        input:
+          type: string
+        cumulativeGasUsed:
+          type: integer
+          format: int64
+        confirmations:
+          type: integer
+          format: int64
+        gas:
+          type: integer
+          format: int64
+        offsetDays:
+          type: integer
+          format: int32
+        firstSeen:
+          type: string
+          format: date-time
+        offsetDaysFromDeploy:
+          type: integer
+          format: int32
+    ProductKpi:
+      type: object
+      properties:
+        key:
+          type: string
+        label:
+          type: string
+        value:
+          type: number
+          format: double
+        unit:
+          type: string
+        deltaPct:
+          type: number
+          format: double
+        deltaValue:
+          type: number
+          format: double
+        previousValue:
+          type: number
+          format: double
+        precision:
+          minimum: 0
+          type: integer
+          description: Recommended number of fractional digits for frontend display
+          format: int32
+    ProductSignal:
+      type: object
+      properties:
+        key:
+          type: string
+        tone:
+          type: string
+        title:
+          type: string
+        value:
+          type: string
+    MethodAnalysisResponse:
+      type: object
+      properties:
+        methodUsageCount:
+          type: object
+          additionalProperties:
+            type: integer
+            format: int32
+    DashboardAnalyticsResponse:
+      type: object
+      properties:
+        contractAddress:
+          type: string
+        metrics:
+          $ref: '#/components/schemas/ProductMetricsResponse'
+        methods:
+          $ref: '#/components/schemas/MethodAnalysisResponse'
+        cohortsWeekly:
+          $ref: '#/components/schemas/CohortAnalysisResponse'
+        cohortTransactions7d:
+          $ref: '#/components/schemas/CohortTransactionResponse'
+        cohortTransactions30d:
+          $ref: '#/components/schemas/CohortTransactionResponse'
+        meta:
+          $ref: '#/components/schemas/DashboardAnalyticsMeta'
+        sectionStatus:
+          $ref: '#/components/schemas/DashboardSectionStatus'
+    ProductMatrixDimension:
+      type: object
+      properties:
+        key:
+          type: string
+        label:
+          type: string
+    ProductMethodPerformance:
+      type: object
+      properties:
+        methodName:
+          type: string
+        activeWallets:
+          type: integer
+          format: int64
+        txCount:
+          type: integer
+          format: int64
+        failedTx:
+          type: integer
+          format: int64
+        failureRatePct:
+          type: number
+          format: double
+        gasFeeNative:
+          type: number
+          format: double
+        failedGasFeeNative:
+          type: number
+          format: double
+        status:
+          type: string
+    TimeSeriesEntry:
+      type: object
+      properties:
+        date:
+          type: string
+        totalTransactions:
+          type: integer
+          format: int32
+        cohortBreakdown:
+          type: object
+          additionalProperties:
+            type: integer
+            format: int32
+        uniqueUsersBreakdown:
+          type: object
+          additionalProperties:
+            type: integer
+            format: int32
+    ProductMatrixCell:
+      type: object
+      properties:
+        rowKey:
+          type: string
+        columnKey:
+          type: string
+        txCount:
+          type: integer
+          format: int64
+        activeWallets:
+          type: integer
+          format: int64
+        newWallets:
+          type: integer
+          format: int64
+        failedTx:
+          type: integer
+          format: int64
+        failureRatePct:
+          type: number
+          format: double
+        gasFeeNative:
+          type: number
+          format: double
+        failedGasFeeNative:
+          type: number
+          format: double
+    ProductMetricsResponse:
+      type: object
+      properties:
+        txs:
+          type: array
+          items:
+            $ref: '#/components/schemas/TransactionWithCohort'
+        changeTxForTheLast30days:
+          type: number
+          format: double
+        amountUniqueWallets:
+          type: integer
+          format: int32
+        changeWalletsForTheLast30days:
+          type: number
+          format: double
+        totalTransactions:
+          type: integer
+          format: int32
+        last30DaysTx:
+          type: integer
+          format: int32
+        totalRetentionRate:
+          type: number
+          format: double
+        totalChurnRate:
+          type: number
+          format: double
+        dau:
+          type: object
+          additionalProperties:
+            type: integer
+            format: int64
+        mau:
+          type: object
+          additionalProperties:
+            type: integer
+            format: int64
+    DashboardSectionStatus:
+      type: object
+      properties:
+        metrics:
+          type: string
+        methods:
+          type: string
+        cohortsWeekly:
+          type: string
+        cohortTransactions7d:
+          type: string
+        cohortTransactions30d:
+          type: string
+      description: 'Per-section readiness: ready, preparing or unavailable'
+    ProductAnalyticsDashboardResponse:
+      type: object
+      properties:
+        meta:
+          $ref: '#/components/schemas/ProductAnalyticsMeta'
+        kpis:
+          type: array
+          items:
+            $ref: '#/components/schemas/ProductKpi'
+        activity:
+          type: array
+          items:
+            $ref: '#/components/schemas/ProductActivityPoint'
+        cohortMethodMatrix:
+          $ref: '#/components/schemas/ProductMatrix'
+        classMethodMatrix:
+          $ref: '#/components/schemas/ProductMatrix'
+        methodPerformance:
+          type: array
+          items:
+            $ref: '#/components/schemas/ProductMethodPerformance'
+        walletClasses:
+          type: array
+          items:
+            $ref: '#/components/schemas/ProductWalletClass'
+        risk:
+          $ref: '#/components/schemas/ProductRiskSummary'
+        signals:
+          type: array
+          items:
+            $ref: '#/components/schemas/ProductSignal'
+        sectionStatus:
+          $ref: '#/components/schemas/ProductSectionStatus'
+    ProductMatrix:
+      type: object
+      properties:
+        rows:
+          type: array
+          items:
+            $ref: '#/components/schemas/ProductMatrixDimension'
+        columns:
+          type: array
+          items:
+            $ref: '#/components/schemas/ProductMatrixDimension'
+        cells:
+          type: array
+          items:
+            $ref: '#/components/schemas/ProductMatrixCell'
+    TokenAnalysisResponse:
+      type: object
+      properties:
+        name:
+          type: string
+        value:
+          type: string
+        change:
+          type: string
+        amount:
+          type: string
+    ProductAnalyticsMeta:
+      type: object
+      properties:
+        contractAddress:
+          type: string
+        chainId:
+          type: integer
+          format: int32
+        chain:
+          type: string
+        dateFrom:
+          type: string
+        dateTo:
+          type: string
+        compareDateFrom:
+          type: string
+        compareDateTo:
+          type: string
+        blockFrom:
+          type: integer
+          format: int64
+        blockTo:
+          type: integer
+          format: int64
+        generatedAt:
+          type: string
+          description: UTC time when this dashboard result was calculated
+          format: date-time
+        dataThrough:
+          type:
+          - string
+          - 'null'
+          description: Timestamp of the latest transaction included in the snapshot
+          format: date-time
+        requestId:
+          type:
+          - string
+          - 'null'
+          description: Correlation ID also returned in X-Request-ID
+    ProductSectionStatus:
+      type: object
+      properties:
+        kpis:
+          type: string
+        activity:
+          type: string
+        cohortMethodMatrix:
+          type: string
+        classMethodMatrix:
+          type: string
+        methodPerformance:
+          type: string
+        walletClasses:
+          type: string
+        risk:
+          type: string
+        signals:
+          type: string
+      description: 'Per-section readiness: ready, preparing, syncing or unavailable'
+    CohortData:
+      type: object
+      properties:
+        cohortDate:
+          type: string
+          format: date
+        totalUsers:
+          type: integer
+          format: int32
+        amountOfTx:
+          type: object
+          additionalProperties:
+            type: integer
+            format: int32
+        retentionRates:
+          type: object
+          additionalProperties:
+            type: number
+            format: double
+    Metadata:
+      type: object
+      properties:
+        totalPeriods:
+          type: integer
+          format: int32
+        granularity:
+          type: string
+        contractAddress:
+          type: string
+        blockNumber:
+          type: integer
+          format: int64
+    DashboardAnalyticsMeta:
+      type: object
+      properties:
+        generatedAt:
+          type: string
+          description: UTC time when this dashboard result was calculated
+          format: date-time
+        dataThrough:
+          type:
+          - string
+          - 'null'
+          description: Latest activity date represented by non-zero returned data
+          format: date-time
+        blockFrom:
+          type:
+          - integer
+          - 'null'
+          description: First included blockchain block when known
+          format: int64
+        blockTo:
+          type:
+          - integer
+          - 'null'
+          description: Latest included blockchain block when known
+          format: int64
+        requestId:
+          type:
+          - string
+          - 'null'
+          description: Correlation ID also returned in X-Request-ID
+        dateFrom:
+          type: string
+        dateTo:
+          type: string
+        interval:
+          type: string
+        granularity:
+          type: string
+    CohortTransactionResponse:
+      type: object
+      properties:
+        timeSeriesData:
+          type: array
+          items:
+            $ref: '#/components/schemas/TimeSeriesEntry'
+        cohortLabels:
+          type: object
+          additionalProperties:
+            type: string
+        metadata:
+          $ref: '#/components/schemas/Metadata'
+    ProductWalletClass:
+      type: object
+      properties:
+        className:
+          type: string
+        activeWallets:
+          type: integer
+          format: int64
+        sharePct:
+          type: number
+          format: double
+        color:
+          type: string
+    ProductActivityPoint:
+      type: object
+      properties:
+        date:
+          type: string
+        transactions:
+          type: integer
+          format: int64
+        activeWallets:
+          type: integer
+          format: int64
+        newWallets:
+          type: integer
+          format: int64
+        returningWallets:
+          type: integer
+          format: int64
+        failedTransactions:
+          type: integer
+          format: int64
+        gasFeeNative:
+          type: number
+          format: double
+    CohortAnalysisResponse:
+      type: object
+      properties:
+        cohorts:
+          type: array
+          items:
+            $ref: '#/components/schemas/CohortData'
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+x-refined-from:
+- moirailabs-com-openapi.json
+- moirailabs-com-openapi.yml

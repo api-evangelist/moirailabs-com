@@ -1,0 +1,313 @@
+openapi: 3.2.0
+info:
+  title: Moirailabs Com Plan Controller API
+  version: v0
+  description: 'Operations tagged plan-controller across 2 of this provider''s published API definitions: moirailabs-com-openapi.json, moirailabs-com-openapi.yml. Each path carries the servers of the definition it was published in.'
+servers:
+- url: http://api.moirailabs.com/api/v1
+  description: Generated server url
+security:
+- bearerAuth: []
+tags:
+- name: plan-controller
+paths:
+  /plans/{id}:
+    get:
+      tags:
+      - plan-controller
+      summary: GET info about plan
+      description: GET-method to retrieve info about plan
+      operationId: getPlan
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: X-Request-ID
+        in: header
+        description: Optional frontend-generated correlation ID. The backend returns the effective value in the response header.
+        required: false
+        schema:
+          maxLength: 128
+          minLength: 1
+          pattern: ^[A-Za-z0-9._:-]{1,128}$
+          type: string
+          example: 8df31080-3b78-4e63-a67d-c2d107190f3c
+      responses:
+        '200':
+          description: OK
+          headers:
+            X-Request-ID:
+              description: Effective request correlation ID used by backend audit logging.
+              schema:
+                maxLength: 128
+                minLength: 1
+                pattern: ^[A-Za-z0-9._:-]{1,128}$
+                type: string
+                example: 8df31080-3b78-4e63-a67d-c2d107190f3c
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/PlanResponse'
+      security: []
+    put:
+      tags:
+      - plan-controller
+      summary: UPDATE plan
+      description: Update plan. PUT-method is available only for ADMIN
+      operationId: updatePlan
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: X-Request-ID
+        in: header
+        description: Optional frontend-generated correlation ID. The backend returns the effective value in the response header.
+        required: false
+        schema:
+          maxLength: 128
+          minLength: 1
+          pattern: ^[A-Za-z0-9._:-]{1,128}$
+          type: string
+          example: 8df31080-3b78-4e63-a67d-c2d107190f3c
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PlanRequest'
+        required: true
+      responses:
+        '200':
+          description: OK
+          headers:
+            X-Request-ID:
+              description: Effective request correlation ID used by backend audit logging.
+              schema:
+                maxLength: 128
+                minLength: 1
+                pattern: ^[A-Za-z0-9._:-]{1,128}$
+                type: string
+                example: 8df31080-3b78-4e63-a67d-c2d107190f3c
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/PlanResponse'
+      security: []
+    delete:
+      tags:
+      - plan-controller
+      summary: DELETE plan
+      description: DELETE plan. DELETE method is available only for ADMIN
+      operationId: deletePlan
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: X-Request-ID
+        in: header
+        description: Optional frontend-generated correlation ID. The backend returns the effective value in the response header.
+        required: false
+        schema:
+          maxLength: 128
+          minLength: 1
+          pattern: ^[A-Za-z0-9._:-]{1,128}$
+          type: string
+          example: 8df31080-3b78-4e63-a67d-c2d107190f3c
+      responses:
+        '200':
+          description: OK
+          headers:
+            X-Request-ID:
+              description: Effective request correlation ID used by backend audit logging.
+              schema:
+                maxLength: 128
+                minLength: 1
+                pattern: ^[A-Za-z0-9._:-]{1,128}$
+                type: string
+                example: 8df31080-3b78-4e63-a67d-c2d107190f3c
+      security: []
+    servers:
+    - url: http://api.moirailabs.com/api/v1
+      description: Generated server url
+  /plans:
+    get:
+      tags:
+      - plan-controller
+      summary: GET all plans
+      description: Get all existed plans
+      operationId: getAllPlans
+      parameters:
+      - name: X-Request-ID
+        in: header
+        description: Optional frontend-generated correlation ID. The backend returns the effective value in the response header.
+        required: false
+        schema:
+          maxLength: 128
+          minLength: 1
+          pattern: ^[A-Za-z0-9._:-]{1,128}$
+          type: string
+          example: 8df31080-3b78-4e63-a67d-c2d107190f3c
+      responses:
+        '200':
+          description: OK
+          headers:
+            X-Request-ID:
+              description: Effective request correlation ID used by backend audit logging.
+              schema:
+                maxLength: 128
+                minLength: 1
+                pattern: ^[A-Za-z0-9._:-]{1,128}$
+                type: string
+                example: 8df31080-3b78-4e63-a67d-c2d107190f3c
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/PlanResponse'
+      security: []
+    post:
+      tags:
+      - plan-controller
+      summary: POST-method to create a new plan
+      description: Admin can create a new plan
+      operationId: createPlan
+      parameters:
+      - name: X-Request-ID
+        in: header
+        description: Optional frontend-generated correlation ID. The backend returns the effective value in the response header.
+        required: false
+        schema:
+          maxLength: 128
+          minLength: 1
+          pattern: ^[A-Za-z0-9._:-]{1,128}$
+          type: string
+          example: 8df31080-3b78-4e63-a67d-c2d107190f3c
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PlanRequest'
+        required: true
+      responses:
+        '200':
+          description: OK
+          headers:
+            X-Request-ID:
+              description: Effective request correlation ID used by backend audit logging.
+              schema:
+                maxLength: 128
+                minLength: 1
+                pattern: ^[A-Za-z0-9._:-]{1,128}$
+                type: string
+                example: 8df31080-3b78-4e63-a67d-c2d107190f3c
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/PlanResponse'
+      security: []
+    servers:
+    - url: http://api.moirailabs.com/api/v1
+      description: Generated server url
+  /plans/active:
+    get:
+      tags:
+      - plan-controller
+      summary: GET all active plans
+      description: Get all active plans
+      operationId: getActivePlans
+      parameters:
+      - name: X-Request-ID
+        in: header
+        description: Optional frontend-generated correlation ID. The backend returns the effective value in the response header.
+        required: false
+        schema:
+          maxLength: 128
+          minLength: 1
+          pattern: ^[A-Za-z0-9._:-]{1,128}$
+          type: string
+          example: 8df31080-3b78-4e63-a67d-c2d107190f3c
+      responses:
+        '200':
+          description: OK
+          headers:
+            X-Request-ID:
+              description: Effective request correlation ID used by backend audit logging.
+              schema:
+                maxLength: 128
+                minLength: 1
+                pattern: ^[A-Za-z0-9._:-]{1,128}$
+                type: string
+                example: 8df31080-3b78-4e63-a67d-c2d107190f3c
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/PlanResponse'
+      security: []
+    servers:
+    - url: http://api.moirailabs.com/api/v1
+      description: Generated server url
+components:
+  schemas:
+    PlanResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        contractAmount:
+          type: integer
+          format: int32
+        period:
+          type: integer
+          format: int32
+        price:
+          type: number
+          format: double
+        is_active:
+          type: boolean
+        enrichedProfilingRequestsPerPeriod:
+          type: integer
+          format: int32
+    PlanRequest:
+      required:
+      - contractAmount
+      - enrichedProfilingRequestsPerPeriod
+      - name
+      - period
+      - price
+      type: object
+      properties:
+        name:
+          type: string
+        contractAmount:
+          type: integer
+          format: int32
+        period:
+          type: integer
+          format: int32
+        price:
+          type: number
+        enrichedProfilingRequestsPerPeriod:
+          type: integer
+          format: int32
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+x-refined-from:
+- moirailabs-com-openapi.json
+- moirailabs-com-openapi.yml

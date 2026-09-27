@@ -1,0 +1,254 @@
+openapi: 3.2.0
+info:
+  title: Moirailabs Com User Info Controller API
+  version: v0
+  description: 'Operations tagged user-info-controller across 2 of this provider''s published API definitions: moirailabs-com-openapi.json, moirailabs-com-openapi.yml. Each path carries the servers of the definition it was published in.'
+servers:
+- url: http://api.moirailabs.com/api/v1
+  description: Generated server url
+security:
+- bearerAuth: []
+tags:
+- name: user-info-controller
+paths:
+  /users/{id}:
+    get:
+      tags:
+      - user-info-controller
+      summary: Get info about user
+      description: Get info about user based on UUID
+      operationId: getUser
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: X-Request-ID
+        in: header
+        description: Optional frontend-generated correlation ID. The backend returns the effective value in the response header.
+        required: false
+        schema:
+          maxLength: 128
+          minLength: 1
+          pattern: ^[A-Za-z0-9._:-]{1,128}$
+          type: string
+          example: 8df31080-3b78-4e63-a67d-c2d107190f3c
+      responses:
+        '200':
+          description: OK
+          headers:
+            X-Request-ID:
+              description: Effective request correlation ID used by backend audit logging.
+              schema:
+                maxLength: 128
+                minLength: 1
+                pattern: ^[A-Za-z0-9._:-]{1,128}$
+                type: string
+                example: 8df31080-3b78-4e63-a67d-c2d107190f3c
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/UserInfoResponse'
+    put:
+      tags:
+      - user-info-controller
+      summary: PUT method
+      description: Update information about user
+      operationId: updateUser
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: X-Request-ID
+        in: header
+        description: Optional frontend-generated correlation ID. The backend returns the effective value in the response header.
+        required: false
+        schema:
+          maxLength: 128
+          minLength: 1
+          pattern: ^[A-Za-z0-9._:-]{1,128}$
+          type: string
+          example: 8df31080-3b78-4e63-a67d-c2d107190f3c
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserInfoRequest'
+        required: true
+      responses:
+        '200':
+          description: OK
+          headers:
+            X-Request-ID:
+              description: Effective request correlation ID used by backend audit logging.
+              schema:
+                maxLength: 128
+                minLength: 1
+                pattern: ^[A-Za-z0-9._:-]{1,128}$
+                type: string
+                example: 8df31080-3b78-4e63-a67d-c2d107190f3c
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/UserInfoResponse'
+    servers:
+    - url: http://api.moirailabs.com/api/v1
+      description: Generated server url
+  /users:
+    post:
+      tags:
+      - user-info-controller
+      summary: POST method
+      description: Create a new user.
+      operationId: createUser
+      parameters:
+      - name: X-Request-ID
+        in: header
+        description: Optional frontend-generated correlation ID. The backend returns the effective value in the response header.
+        required: false
+        schema:
+          maxLength: 128
+          minLength: 1
+          pattern: ^[A-Za-z0-9._:-]{1,128}$
+          type: string
+          example: 8df31080-3b78-4e63-a67d-c2d107190f3c
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserInfoRequest'
+        required: true
+      responses:
+        '200':
+          description: OK
+          headers:
+            X-Request-ID:
+              description: Effective request correlation ID used by backend audit logging.
+              schema:
+                maxLength: 128
+                minLength: 1
+                pattern: ^[A-Za-z0-9._:-]{1,128}$
+                type: string
+                example: 8df31080-3b78-4e63-a67d-c2d107190f3c
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/UserInfoResponse'
+      security: []
+    servers:
+    - url: http://api.moirailabs.com/api/v1
+      description: Generated server url
+  /users/registration-status:
+    get:
+      tags:
+      - user-info-controller
+      summary: Check user registration status
+      description: Returns whether the Supabase user is already registered in the backend.
+      operationId: getRegistrationStatus
+      parameters:
+      - name: userId
+        in: query
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: email
+        in: query
+        required: true
+        schema:
+          type: string
+      - name: X-Request-ID
+        in: header
+        description: Optional frontend-generated correlation ID. The backend returns the effective value in the response header.
+        required: false
+        schema:
+          maxLength: 128
+          minLength: 1
+          pattern: ^[A-Za-z0-9._:-]{1,128}$
+          type: string
+          example: 8df31080-3b78-4e63-a67d-c2d107190f3c
+      responses:
+        '200':
+          description: OK
+          headers:
+            X-Request-ID:
+              description: Effective request correlation ID used by backend audit logging.
+              schema:
+                maxLength: 128
+                minLength: 1
+                pattern: ^[A-Za-z0-9._:-]{1,128}$
+                type: string
+                example: 8df31080-3b78-4e63-a67d-c2d107190f3c
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/UserRegistrationStatusResponse'
+      security: []
+    servers:
+    - url: http://api.moirailabs.com/api/v1
+      description: Generated server url
+components:
+  schemas:
+    UserInfoResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        email:
+          type: string
+        company:
+          type: string
+        firstName:
+          type: string
+        lastName:
+          type: string
+        country:
+          type: string
+    UserRegistrationStatusResponse:
+      type: object
+      properties:
+        registered:
+          type: boolean
+    UserInfoRequest:
+      required:
+      - email
+      - userId
+      type: object
+      properties:
+        userId:
+          type: string
+          format: uuid
+        email:
+          maxLength: 255
+          minLength: 0
+          type: string
+        company:
+          maxLength: 255
+          minLength: 0
+          type: string
+        firstName:
+          maxLength: 255
+          minLength: 0
+          type: string
+        lastName:
+          maxLength: 255
+          minLength: 0
+          type: string
+        country:
+          maxLength: 255
+          minLength: 0
+          type: string
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+x-refined-from:
+- moirailabs-com-openapi.json
+- moirailabs-com-openapi.yml

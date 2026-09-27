@@ -1,0 +1,335 @@
+openapi: 3.2.0
+info:
+  title: Moirailabs Com Contract Info Controller API
+  version: v0
+  description: 'Operations tagged contract-info-controller across 2 of this provider''s published API definitions: moirailabs-com-openapi.json, moirailabs-com-openapi.yml. Each path carries the servers of the definition it was published in.'
+servers:
+- url: http://api.moirailabs.com/api/v1
+  description: Generated server url
+security:
+- bearerAuth: []
+tags:
+- name: contract-info-controller
+paths:
+  /contracts:
+    post:
+      tags:
+      - contract-info-controller
+      summary: Register new contract for user
+      description: Register new contract for user to start calculate analytics
+      operationId: registerContract
+      parameters:
+      - name: X-Request-ID
+        in: header
+        description: Optional frontend-generated correlation ID. The backend returns the effective value in the response header.
+        required: false
+        schema:
+          maxLength: 128
+          minLength: 1
+          pattern: ^[A-Za-z0-9._:-]{1,128}$
+          type: string
+          example: 8df31080-3b78-4e63-a67d-c2d107190f3c
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ContractInfoRequest'
+        required: true
+      responses:
+        '200':
+          description: OK
+          headers:
+            X-Request-ID:
+              description: Effective request correlation ID used by backend audit logging.
+              schema:
+                maxLength: 128
+                minLength: 1
+                pattern: ^[A-Za-z0-9._:-]{1,128}$
+                type: string
+                example: 8df31080-3b78-4e63-a67d-c2d107190f3c
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ContractInfoResponse'
+    servers:
+    - url: http://api.moirailabs.com/api/v1
+      description: Generated server url
+  /contracts/{id}:
+    get:
+      tags:
+      - contract-info-controller
+      summary: Get exact contract
+      description: Get method to get information about contract. User can take info about only his registred contracts
+      operationId: getContract
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: X-Request-ID
+        in: header
+        description: Optional frontend-generated correlation ID. The backend returns the effective value in the response header.
+        required: false
+        schema:
+          maxLength: 128
+          minLength: 1
+          pattern: ^[A-Za-z0-9._:-]{1,128}$
+          type: string
+          example: 8df31080-3b78-4e63-a67d-c2d107190f3c
+      responses:
+        '200':
+          description: OK
+          headers:
+            X-Request-ID:
+              description: Effective request correlation ID used by backend audit logging.
+              schema:
+                maxLength: 128
+                minLength: 1
+                pattern: ^[A-Za-z0-9._:-]{1,128}$
+                type: string
+                example: 8df31080-3b78-4e63-a67d-c2d107190f3c
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ContractInfoResponse'
+    servers:
+    - url: http://api.moirailabs.com/api/v1
+      description: Generated server url
+  /contracts/{contractAddress}/fetchdata:
+    get:
+      tags:
+      - contract-info-controller
+      summary: Retrieve method
+      description: GET-method just to update last data about contract and retrieve last tx from blockchain
+      operationId: fetchDataContract
+      parameters:
+      - name: contractAddress
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: startBlock
+        in: query
+        required: true
+        schema:
+          type: string
+      - name: endBlock
+        in: query
+        required: true
+        schema:
+          type: string
+      - name: X-Request-ID
+        in: header
+        description: Optional frontend-generated correlation ID. The backend returns the effective value in the response header.
+        required: false
+        schema:
+          maxLength: 128
+          minLength: 1
+          pattern: ^[A-Za-z0-9._:-]{1,128}$
+          type: string
+          example: 8df31080-3b78-4e63-a67d-c2d107190f3c
+      responses:
+        '200':
+          description: OK
+          headers:
+            X-Request-ID:
+              description: Effective request correlation ID used by backend audit logging.
+              schema:
+                maxLength: 128
+                minLength: 1
+                pattern: ^[A-Za-z0-9._:-]{1,128}$
+                type: string
+                example: 8df31080-3b78-4e63-a67d-c2d107190f3c
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ContractInfoResponse'
+    servers:
+    - url: http://api.moirailabs.com/api/v1
+      description: Generated server url
+  /contracts/user:
+    get:
+      tags:
+      - contract-info-controller
+      summary: Get all user's contracts
+      description: GET-method to get all contract registred by user
+      operationId: getUserContracts
+      parameters:
+      - name: X-Request-ID
+        in: header
+        description: Optional frontend-generated correlation ID. The backend returns the effective value in the response header.
+        required: false
+        schema:
+          maxLength: 128
+          minLength: 1
+          pattern: ^[A-Za-z0-9._:-]{1,128}$
+          type: string
+          example: 8df31080-3b78-4e63-a67d-c2d107190f3c
+      responses:
+        '200':
+          description: OK
+          headers:
+            X-Request-ID:
+              description: Effective request correlation ID used by backend audit logging.
+              schema:
+                maxLength: 128
+                minLength: 1
+                pattern: ^[A-Za-z0-9._:-]{1,128}$
+                type: string
+                example: 8df31080-3b78-4e63-a67d-c2d107190f3c
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ContractInfoResponse'
+    servers:
+    - url: http://api.moirailabs.com/api/v1
+      description: Generated server url
+  /contracts/status:
+    get:
+      tags:
+      - contract-info-controller
+      summary: Get contract sync status
+      description: Check synced block in DB against current blockchain head
+      operationId: getContractStatus
+      parameters:
+      - name: contractAddress
+        in: query
+        required: true
+        schema:
+          type: string
+      - name: X-Request-ID
+        in: header
+        description: Optional frontend-generated correlation ID. The backend returns the effective value in the response header.
+        required: false
+        schema:
+          maxLength: 128
+          minLength: 1
+          pattern: ^[A-Za-z0-9._:-]{1,128}$
+          type: string
+          example: 8df31080-3b78-4e63-a67d-c2d107190f3c
+      responses:
+        '200':
+          description: OK
+          headers:
+            X-Request-ID:
+              description: Effective request correlation ID used by backend audit logging.
+              schema:
+                maxLength: 128
+                minLength: 1
+                pattern: ^[A-Za-z0-9._:-]{1,128}$
+                type: string
+                example: 8df31080-3b78-4e63-a67d-c2d107190f3c
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ContractSyncStatusResponse'
+    servers:
+    - url: http://api.moirailabs.com/api/v1
+      description: Generated server url
+  /contracts/{contractAddress}:
+    delete:
+      tags:
+      - contract-info-controller
+      summary: DELETE contract for user to analysis
+      description: DELETE-method will delete contract from list of analysis
+      operationId: deleteContract
+      parameters:
+      - name: contractAddress
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: X-Request-ID
+        in: header
+        description: Optional frontend-generated correlation ID. The backend returns the effective value in the response header.
+        required: false
+        schema:
+          maxLength: 128
+          minLength: 1
+          pattern: ^[A-Za-z0-9._:-]{1,128}$
+          type: string
+          example: 8df31080-3b78-4e63-a67d-c2d107190f3c
+      responses:
+        '200':
+          description: OK
+          headers:
+            X-Request-ID:
+              description: Effective request correlation ID used by backend audit logging.
+              schema:
+                maxLength: 128
+                minLength: 1
+                pattern: ^[A-Za-z0-9._:-]{1,128}$
+                type: string
+                example: 8df31080-3b78-4e63-a67d-c2d107190f3c
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ContractInfoResponse'
+    servers:
+    - url: http://api.moirailabs.com/api/v1
+      description: Generated server url
+components:
+  schemas:
+    ContractInfoRequest:
+      required:
+      - address
+      - chainId
+      type: object
+      properties:
+        chainId:
+          type: integer
+          format: int32
+        address:
+          maxLength: 42
+          minLength: 42
+          type: string
+        type:
+          maxLength: 255
+          minLength: 0
+          type: string
+    ContractSyncStatusResponse:
+      type: object
+      properties:
+        contractAddress:
+          type: string
+        currentBlock:
+          type: integer
+          format: int64
+        targetBlock:
+          type: integer
+          format: int64
+        lastSyncedAt:
+          type: string
+          format: date-time
+        progress:
+          type: integer
+          format: int32
+        syncing:
+          type: boolean
+    ContractInfoResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        chainId:
+          type: integer
+          format: int32
+        userId:
+          type: string
+          format: uuid
+        address:
+          type: string
+        type:
+          type: string
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+x-refined-from:
+- moirailabs-com-openapi.json
+- moirailabs-com-openapi.yml

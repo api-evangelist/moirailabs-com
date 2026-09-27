@@ -1,0 +1,1220 @@
+openapi: 3.2.0
+info:
+  title: Moirailabs Com Analytics Invocation Controller API
+  version: v0
+  description: 'Operations tagged analytics-invocation-controller across 2 of this provider''s published API definitions: moirailabs-com-openapi.json, moirailabs-com-openapi.yml. Each path carries the servers of the definition it was published in.'
+servers:
+- url: http://api.moirailabs.com/api/v1
+  description: Generated server url
+security:
+- bearerAuth: []
+tags:
+- name: analytics-invocation-controller
+paths:
+  /analytics/invocations:
+    post:
+      tags:
+      - analytics-invocation-controller
+      summary: Create an analytics invocation
+      description: 'Creates one durable calculation. Prefer: wait=N waits for the same job; Prefer: respond-async returns immediately.'
+      operationId: create
+      parameters:
+      - name: Idempotency-Key
+        in: header
+        required: false
+        schema:
+          type: string
+      - name: Prefer
+        in: header
+        required: false
+        schema:
+          type: string
+      - name: X-Request-ID
+        in: header
+        description: Optional frontend-generated correlation ID. The backend returns the effective value in the response header.
+        required: false
+        schema:
+          maxLength: 128
+          minLength: 1
+          pattern: ^[A-Za-z0-9._:-]{1,128}$
+          type: string
+          example: 8df31080-3b78-4e63-a67d-c2d107190f3c
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AnalyticsInvocationCreateRequest'
+        required: true
+      responses:
+        '202':
+          description: Calculation continues asynchronously
+          headers:
+            Retry-After:
+              description: Polling delay in seconds
+              style: simple
+            X-Request-ID:
+              description: Effective request correlation ID used by backend audit logging.
+              schema:
+                maxLength: 128
+                minLength: 1
+                pattern: ^[A-Za-z0-9._:-]{1,128}$
+                type: string
+                example: 8df31080-3b78-4e63-a67d-c2d107190f3c
+            Location:
+              description: Invocation status URL
+              style: simple
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/AnalyticsInvocationStatusResponse'
+        '200':
+          description: Calculation completed inside the wait budget
+          headers:
+            X-Request-ID:
+              description: Effective request correlation ID used by backend audit logging.
+              schema:
+                maxLength: 128
+                minLength: 1
+                pattern: ^[A-Za-z0-9._:-]{1,128}$
+                type: string
+                example: 8df31080-3b78-4e63-a67d-c2d107190f3c
+          content:
+            '*/*':
+              schema:
+                oneOf:
+                - $ref: '#/components/schemas/CohortTransactionResponse'
+                - $ref: '#/components/schemas/CohortAnalysisResponse'
+                - $ref: '#/components/schemas/DashboardAnalyticsResponse'
+                - $ref: '#/components/schemas/ProductAnalyticsDashboardResponse'
+                - $ref: '#/components/schemas/ProductMetricsResponse'
+                - $ref: '#/components/schemas/MethodAnalysisResponse'
+                - $ref: '#/components/schemas/TokenAnalysisResponse'
+        '410':
+          description: The reused invocation result has expired
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Analytics invocations are disabled
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: The authenticated user cannot access the requested contract
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '429':
+          description: Per-user active invocation quota or create rate limit was exceeded
+          headers:
+            Retry-After:
+              description: Delay in seconds before another create attempt
+              schema:
+                minimum: 1
+                type: integer
+                format: int32
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '400':
+          description: Invalid operation, request body, Prefer, Idempotency-Key, or analytics parameters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '409':
+          description: Idempotency-Key was reused for another request or the invocation is no longer reusable
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '422':
+          description: The calculation failed permanently inside the wait budget
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+    servers:
+    - url: http://api.moirailabs.com/api/v1
+      description: Generated server url
+  /analytics/invocations/{id}/cancel:
+    post:
+      tags:
+      - analytics-invocation-controller
+      summary: Request analytics invocation cancellation
+      operationId: cancel
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: X-Request-ID
+        in: header
+        description: Optional frontend-generated correlation ID. The backend returns the effective value in the response header.
+        required: false
+        schema:
+          maxLength: 128
+          minLength: 1
+          pattern: ^[A-Za-z0-9._:-]{1,128}$
+          type: string
+          example: 8df31080-3b78-4e63-a67d-c2d107190f3c
+      responses:
+        '200':
+          description: OK
+          headers:
+            X-Request-ID:
+              description: Effective request correlation ID used by backend audit logging.
+              schema:
+                maxLength: 128
+                minLength: 1
+                pattern: ^[A-Za-z0-9._:-]{1,128}$
+                type: string
+                example: 8df31080-3b78-4e63-a67d-c2d107190f3c
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/AnalyticsInvocationStatusResponse'
+        '404':
+          description: Invocation is absent or belongs to another user
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '409':
+          description: Invocation is already complete and cannot be cancelled
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '202':
+          description: Cancellation was accepted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AnalyticsInvocationStatusResponse'
+    servers:
+    - url: http://api.moirailabs.com/api/v1
+      description: Generated server url
+  /analytics/invocations/{id}:
+    get:
+      tags:
+      - analytics-invocation-controller
+      summary: Get analytics invocation status
+      operationId: status
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: X-Request-ID
+        in: header
+        description: Optional frontend-generated correlation ID. The backend returns the effective value in the response header.
+        required: false
+        schema:
+          maxLength: 128
+          minLength: 1
+          pattern: ^[A-Za-z0-9._:-]{1,128}$
+          type: string
+          example: 8df31080-3b78-4e63-a67d-c2d107190f3c
+      responses:
+        '200':
+          description: OK
+          headers:
+            X-Request-ID:
+              description: Effective request correlation ID used by backend audit logging.
+              schema:
+                maxLength: 128
+                minLength: 1
+                pattern: ^[A-Za-z0-9._:-]{1,128}$
+                type: string
+                example: 8df31080-3b78-4e63-a67d-c2d107190f3c
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/AnalyticsInvocationStatusResponse'
+        '404':
+          description: Invocation is absent or belongs to another user
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+    servers:
+    - url: http://api.moirailabs.com/api/v1
+      description: Generated server url
+  /analytics/invocations/{id}/result:
+    get:
+      tags:
+      - analytics-invocation-controller
+      summary: Get the stored analytics invocation result
+      operationId: result
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: X-Request-ID
+        in: header
+        description: Optional frontend-generated correlation ID. The backend returns the effective value in the response header.
+        required: false
+        schema:
+          maxLength: 128
+          minLength: 1
+          pattern: ^[A-Za-z0-9._:-]{1,128}$
+          type: string
+          example: 8df31080-3b78-4e63-a67d-c2d107190f3c
+      responses:
+        '202':
+          description: Result is not ready
+          headers:
+            Retry-After:
+              description: Polling delay in seconds
+              style: simple
+            X-Request-ID:
+              description: Effective request correlation ID used by backend audit logging.
+              schema:
+                maxLength: 128
+                minLength: 1
+                pattern: ^[A-Za-z0-9._:-]{1,128}$
+                type: string
+                example: 8df31080-3b78-4e63-a67d-c2d107190f3c
+          content:
+            '*/*':
+              schema:
+                type: object
+        '200':
+          description: Stored result; calculation is not rerun
+          headers:
+            X-Request-ID:
+              description: Effective request correlation ID used by backend audit logging.
+              schema:
+                maxLength: 128
+                minLength: 1
+                pattern: ^[A-Za-z0-9._:-]{1,128}$
+                type: string
+                example: 8df31080-3b78-4e63-a67d-c2d107190f3c
+          content:
+            '*/*':
+              schema:
+                oneOf:
+                - $ref: '#/components/schemas/CohortTransactionResponse'
+                - $ref: '#/components/schemas/CohortAnalysisResponse'
+                - $ref: '#/components/schemas/DashboardAnalyticsResponse'
+                - $ref: '#/components/schemas/ProductAnalyticsDashboardResponse'
+                - $ref: '#/components/schemas/ProductMetricsResponse'
+                - $ref: '#/components/schemas/MethodAnalysisResponse'
+                - $ref: '#/components/schemas/TokenAnalysisResponse'
+        '422':
+          description: Calculation failed permanently
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '410':
+          description: Stored result has expired
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Invocation is absent or belongs to another user
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '409':
+          description: Invocation was cancelled
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+    servers:
+    - url: http://api.moirailabs.com/api/v1
+      description: Generated server url
+components:
+  schemas:
+    AnalyticsInvocationCreateRequest:
+      required:
+      - operation
+      - request
+      type: object
+      properties:
+        operation:
+          type: string
+          enum:
+          - COHORT_TRANSACTIONS
+          - COHORTS
+          - DASHBOARD
+          - PRODUCT_DASHBOARD
+          - METRICS
+          - METHODS
+          - TOKENS
+        request:
+          type: object
+          oneOf:
+          - $ref: '#/components/schemas/CohortTransactionsInvocationRequest'
+          - $ref: '#/components/schemas/CohortsInvocationRequest'
+          - $ref: '#/components/schemas/DashboardInvocationRequest'
+          - $ref: '#/components/schemas/ProductDashboardInvocationRequest'
+          - $ref: '#/components/schemas/MetricsInvocationRequest'
+          - $ref: '#/components/schemas/MethodsInvocationRequest'
+          - $ref: '#/components/schemas/TokensInvocationRequest'
+      discriminator:
+        propertyName: operation
+      oneOf:
+      - $ref: '#/components/schemas/CohortTransactionsInvocationCreateCommand'
+      - $ref: '#/components/schemas/CohortsInvocationCreateCommand'
+      - $ref: '#/components/schemas/DashboardInvocationCreateCommand'
+      - $ref: '#/components/schemas/ProductDashboardInvocationCreateCommand'
+      - $ref: '#/components/schemas/MetricsInvocationCreateCommand'
+      - $ref: '#/components/schemas/MethodsInvocationCreateCommand'
+      - $ref: '#/components/schemas/TokensInvocationCreateCommand'
+    CohortsInvocationCreateCommand:
+      type: object
+      properties:
+        operation:
+          type: string
+          enum:
+          - COHORTS
+        request:
+          $ref: '#/components/schemas/CohortsInvocationRequest'
+      description: Create command for the COHORTS analytics operation
+    ProductRiskSummary:
+      type: object
+      properties:
+        failureRatePct:
+          type: number
+          format: double
+        failedGasFeeNative:
+          type: number
+          format: double
+        worstMethodFailureRatePct:
+          type: number
+          format: double
+        gasSpikeMultiplier:
+          type: number
+          format: double
+        failedGasByMethod:
+          type: array
+          items:
+            $ref: '#/components/schemas/ProductMethodPerformance'
+    TransactionWithCohort:
+      type: object
+      properties:
+        txHash:
+          type: string
+        blockNumber:
+          type: integer
+          format: int64
+        timestamp:
+          type: string
+          format: date-time
+        from:
+          type: string
+        to:
+          type: string
+        value:
+          type: number
+        gasUsed:
+          type: integer
+          format: int64
+        gasPrice:
+          type: integer
+          format: int64
+        contractAddress:
+          type: string
+        functionName:
+          type: string
+        method:
+          type: string
+        nonce:
+          type: integer
+          format: int64
+        blockHash:
+          type: string
+        transactionIndex:
+          type: integer
+          format: int32
+        isError:
+          type: integer
+          format: int32
+        txreceiptStatus:
+          type: integer
+          format: int32
+        input:
+          type: string
+        cumulativeGasUsed:
+          type: integer
+          format: int64
+        confirmations:
+          type: integer
+          format: int64
+        gas:
+          type: integer
+          format: int64
+        offsetDays:
+          type: integer
+          format: int32
+        firstSeen:
+          type: string
+          format: date-time
+        offsetDaysFromDeploy:
+          type: integer
+          format: int32
+    ProductKpi:
+      type: object
+      properties:
+        key:
+          type: string
+        label:
+          type: string
+        value:
+          type: number
+          format: double
+        unit:
+          type: string
+        deltaPct:
+          type: number
+          format: double
+        deltaValue:
+          type: number
+          format: double
+        previousValue:
+          type: number
+          format: double
+        precision:
+          minimum: 0
+          type: integer
+          description: Recommended number of fractional digits for frontend display
+          format: int32
+    ProductSignal:
+      type: object
+      properties:
+        key:
+          type: string
+        tone:
+          type: string
+        title:
+          type: string
+        value:
+          type: string
+    TokensInvocationCreateCommand:
+      type: object
+      properties:
+        operation:
+          type: string
+          enum:
+          - TOKENS
+        request:
+          $ref: '#/components/schemas/TokensInvocationRequest'
+      description: Create command for the TOKENS analytics operation
+    MethodAnalysisResponse:
+      type: object
+      properties:
+        methodUsageCount:
+          type: object
+          additionalProperties:
+            type: integer
+            format: int32
+    CohortTransactionsInvocationCreateCommand:
+      type: object
+      properties:
+        operation:
+          type: string
+          enum:
+          - COHORT_TRANSACTIONS
+        request:
+          $ref: '#/components/schemas/CohortTransactionsInvocationRequest'
+      description: Create command for the COHORT_TRANSACTIONS analytics operation
+    DashboardAnalyticsResponse:
+      type: object
+      properties:
+        contractAddress:
+          type: string
+        metrics:
+          $ref: '#/components/schemas/ProductMetricsResponse'
+        methods:
+          $ref: '#/components/schemas/MethodAnalysisResponse'
+        cohortsWeekly:
+          $ref: '#/components/schemas/CohortAnalysisResponse'
+        cohortTransactions7d:
+          $ref: '#/components/schemas/CohortTransactionResponse'
+        cohortTransactions30d:
+          $ref: '#/components/schemas/CohortTransactionResponse'
+        meta:
+          $ref: '#/components/schemas/DashboardAnalyticsMeta'
+        sectionStatus:
+          $ref: '#/components/schemas/DashboardSectionStatus'
+    ProductMatrixDimension:
+      type: object
+      properties:
+        key:
+          type: string
+        label:
+          type: string
+    MethodsInvocationRequest:
+      required:
+      - contractAddress
+      type: object
+      properties:
+        contractAddress:
+          type: string
+          example: '0x313416870A4da6F12505a550B67bB73c8E21D5d3'
+    ProductMethodPerformance:
+      type: object
+      properties:
+        methodName:
+          type: string
+        activeWallets:
+          type: integer
+          format: int64
+        txCount:
+          type: integer
+          format: int64
+        failedTx:
+          type: integer
+          format: int64
+        failureRatePct:
+          type: number
+          format: double
+        gasFeeNative:
+          type: number
+          format: double
+        failedGasFeeNative:
+          type: number
+          format: double
+        status:
+          type: string
+    TimeSeriesEntry:
+      type: object
+      properties:
+        date:
+          type: string
+        totalTransactions:
+          type: integer
+          format: int32
+        cohortBreakdown:
+          type: object
+          additionalProperties:
+            type: integer
+            format: int32
+        uniqueUsersBreakdown:
+          type: object
+          additionalProperties:
+            type: integer
+            format: int32
+    ProductMatrixCell:
+      type: object
+      properties:
+        rowKey:
+          type: string
+        columnKey:
+          type: string
+        txCount:
+          type: integer
+          format: int64
+        activeWallets:
+          type: integer
+          format: int64
+        newWallets:
+          type: integer
+          format: int64
+        failedTx:
+          type: integer
+          format: int64
+        failureRatePct:
+          type: number
+          format: double
+        gasFeeNative:
+          type: number
+          format: double
+        failedGasFeeNative:
+          type: number
+          format: double
+    DashboardInvocationRequest:
+      required:
+      - contractAddress
+      type: object
+      properties:
+        contractAddress:
+          type: string
+          example: '0x313416870A4da6F12505a550B67bB73c8E21D5d3'
+        startDate:
+          type: string
+          format: date
+          example: '2026-05-01'
+        endDate:
+          type: string
+          format: date
+          example: '2026-07-01'
+        interval:
+          type: string
+          default: weekly
+          enum:
+          - daily
+          - weekly
+          - monthly
+        granularity:
+          type: string
+          default: day
+          enum:
+          - day
+          - week
+          - month
+    ProductDashboardInvocationRequest:
+      required:
+      - contractAddress
+      - dateFrom
+      - dateTo
+      type: object
+      properties:
+        contractAddress:
+          type: string
+          example: '0x461ffa24b716f68c5a4fb583592f295db5f7ba36'
+        chainId:
+          minimum: 1
+          type: integer
+          format: int32
+          example: 1
+        chain:
+          type: string
+          example: Ethereum
+        dateFrom:
+          type: string
+          format: date
+          example: '2026-07-23'
+        dateTo:
+          type: string
+          format: date
+          example: '2026-07-29'
+        compareDateFrom:
+          type: string
+          format: date
+          example: '2026-07-16'
+        compareDateTo:
+          type: string
+          format: date
+          example: '2026-07-22'
+        granularity:
+          type: string
+          default: day
+          enum:
+          - day
+        status:
+          type: string
+          default: all
+          enum:
+          - all
+          - success
+          - failed
+        topLimit:
+          maximum: 50
+          minimum: 1
+          type: integer
+          format: int32
+          default: 8
+    ProductMetricsResponse:
+      type: object
+      properties:
+        txs:
+          type: array
+          items:
+            $ref: '#/components/schemas/TransactionWithCohort'
+        changeTxForTheLast30days:
+          type: number
+          format: double
+        amountUniqueWallets:
+          type: integer
+          format: int32
+        changeWalletsForTheLast30days:
+          type: number
+          format: double
+        totalTransactions:
+          type: integer
+          format: int32
+        last30DaysTx:
+          type: integer
+          format: int32
+        totalRetentionRate:
+          type: number
+          format: double
+        totalChurnRate:
+          type: number
+          format: double
+        dau:
+          type: object
+          additionalProperties:
+            type: integer
+            format: int64
+        mau:
+          type: object
+          additionalProperties:
+            type: integer
+            format: int64
+    DashboardSectionStatus:
+      type: object
+      properties:
+        metrics:
+          type: string
+        methods:
+          type: string
+        cohortsWeekly:
+          type: string
+        cohortTransactions7d:
+          type: string
+        cohortTransactions30d:
+          type: string
+      description: 'Per-section readiness: ready, preparing or unavailable'
+    ProductAnalyticsDashboardResponse:
+      type: object
+      properties:
+        meta:
+          $ref: '#/components/schemas/ProductAnalyticsMeta'
+        kpis:
+          type: array
+          items:
+            $ref: '#/components/schemas/ProductKpi'
+        activity:
+          type: array
+          items:
+            $ref: '#/components/schemas/ProductActivityPoint'
+        cohortMethodMatrix:
+          $ref: '#/components/schemas/ProductMatrix'
+        classMethodMatrix:
+          $ref: '#/components/schemas/ProductMatrix'
+        methodPerformance:
+          type: array
+          items:
+            $ref: '#/components/schemas/ProductMethodPerformance'
+        walletClasses:
+          type: array
+          items:
+            $ref: '#/components/schemas/ProductWalletClass'
+        risk:
+          $ref: '#/components/schemas/ProductRiskSummary'
+        signals:
+          type: array
+          items:
+            $ref: '#/components/schemas/ProductSignal'
+        sectionStatus:
+          $ref: '#/components/schemas/ProductSectionStatus'
+    MetricsInvocationRequest:
+      required:
+      - contractAddress
+      type: object
+      properties:
+        contractAddress:
+          type: string
+          example: '0x313416870A4da6F12505a550B67bB73c8E21D5d3'
+    AnalyticsInvocationStatusResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        operation:
+          type: string
+          enum:
+          - COHORT_TRANSACTIONS
+          - COHORTS
+          - DASHBOARD
+          - PRODUCT_DASHBOARD
+          - METRICS
+          - METHODS
+          - TOKENS
+        status:
+          type: string
+          enum:
+          - QUEUED
+          - WAITING_DEPENDENCY
+          - RUNNING
+          - SUCCEEDED
+          - FAILED
+          - CANCEL_REQUESTED
+          - CANCELLED
+          - EXPIRED
+        stage:
+          type: string
+          enum:
+          - VALIDATING
+          - WAITING_DEPENDENCY
+          - QUERYING
+          - AGGREGATING
+          - SERIALIZING
+          - SAVING_RESULT
+          - COMPLETED
+        attempt:
+          type: integer
+          format: int32
+        maxAttempts:
+          type: integer
+          format: int32
+        retryAfterSeconds:
+          type: integer
+          format: int32
+        dependencyId:
+          type: string
+          format: uuid
+        errorCode:
+          type: string
+        errorMessage:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+        startedAt:
+          type: string
+          format: date-time
+        completedAt:
+          type: string
+          format: date-time
+        expiresAt:
+          type: string
+          format: date-time
+        links:
+          $ref: '#/components/schemas/AnalyticsInvocationLinks'
+    ProductMatrix:
+      type: object
+      properties:
+        rows:
+          type: array
+          items:
+            $ref: '#/components/schemas/ProductMatrixDimension'
+        columns:
+          type: array
+          items:
+            $ref: '#/components/schemas/ProductMatrixDimension'
+        cells:
+          type: array
+          items:
+            $ref: '#/components/schemas/ProductMatrixCell'
+    TokenAnalysisResponse:
+      type: object
+      properties:
+        name:
+          type: string
+        value:
+          type: string
+        change:
+          type: string
+        amount:
+          type: string
+    CohortTransactionsInvocationRequest:
+      required:
+      - contractAddress
+      - granularity
+      - period
+      type: object
+      properties:
+        contractAddress:
+          type: string
+          example: '0x313416870A4da6F12505a550B67bB73c8E21D5d3'
+        period:
+          type: string
+          example: 1y
+          enum:
+          - 7d
+          - 30d
+          - 90d
+          - 1y
+        granularity:
+          type: string
+          example: day
+          enum:
+          - day
+          - week
+          - month
+    MethodsInvocationCreateCommand:
+      type: object
+      properties:
+        operation:
+          type: string
+          enum:
+          - METHODS
+        request:
+          $ref: '#/components/schemas/MethodsInvocationRequest'
+      description: Create command for the METHODS analytics operation
+    ProductAnalyticsMeta:
+      type: object
+      properties:
+        contractAddress:
+          type: string
+        chainId:
+          type: integer
+          format: int32
+        chain:
+          type: string
+        dateFrom:
+          type: string
+        dateTo:
+          type: string
+        compareDateFrom:
+          type: string
+        compareDateTo:
+          type: string
+        blockFrom:
+          type: integer
+          format: int64
+        blockTo:
+          type: integer
+          format: int64
+        generatedAt:
+          type: string
+          description: UTC time when this dashboard result was calculated
+          format: date-time
+        dataThrough:
+          type:
+          - string
+          - 'null'
+          description: Timestamp of the latest transaction included in the snapshot
+          format: date-time
+        requestId:
+          type:
+          - string
+          - 'null'
+          description: Correlation ID also returned in X-Request-ID
+    AnalyticsInvocationLinks:
+      type: object
+      properties:
+        self:
+          type: string
+        result:
+          type: string
+        cancel:
+          type: string
+    MetricsInvocationCreateCommand:
+      type: object
+      properties:
+        operation:
+          type: string
+          enum:
+          - METRICS
+        request:
+          $ref: '#/components/schemas/MetricsInvocationRequest'
+      description: Create command for the METRICS analytics operation
+    ProductSectionStatus:
+      type: object
+      properties:
+        kpis:
+          type: string
+        activity:
+          type: string
+        cohortMethodMatrix:
+          type: string
+        classMethodMatrix:
+          type: string
+        methodPerformance:
+          type: string
+        walletClasses:
+          type: string
+        risk:
+          type: string
+        signals:
+          type: string
+      description: 'Per-section readiness: ready, preparing, syncing or unavailable'
+    ErrorResponse:
+      type: object
+      properties:
+        code:
+          type: string
+        message:
+          type: string
+        details:
+          type: string
+    CohortData:
+      type: object
+      properties:
+        cohortDate:
+          type: string
+          format: date
+        totalUsers:
+          type: integer
+          format: int32
+        amountOfTx:
+          type: object
+          additionalProperties:
+            type: integer
+            format: int32
+        retentionRates:
+          type: object
+          additionalProperties:
+            type: number
+            format: double
+    Metadata:
+      type: object
+      properties:
+        totalPeriods:
+          type: integer
+          format: int32
+        granularity:
+          type: string
+        contractAddress:
+          type: string
+        blockNumber:
+          type: integer
+          format: int64
+    DashboardAnalyticsMeta:
+      type: object
+      properties:
+        generatedAt:
+          type: string
+          description: UTC time when this dashboard result was calculated
+          format: date-time
+        dataThrough:
+          type:
+          - string
+          - 'null'
+          description: Latest activity date represented by non-zero returned data
+          format: date-time
+        blockFrom:
+          type:
+          - integer
+          - 'null'
+          description: First included blockchain block when known
+          format: int64
+        blockTo:
+          type:
+          - integer
+          - 'null'
+          description: Latest included blockchain block when known
+          format: int64
+        requestId:
+          type:
+          - string
+          - 'null'
+          description: Correlation ID also returned in X-Request-ID
+        dateFrom:
+          type: string
+        dateTo:
+          type: string
+        interval:
+          type: string
+        granularity:
+          type: string
+    CohortTransactionResponse:
+      type: object
+      properties:
+        timeSeriesData:
+          type: array
+          items:
+            $ref: '#/components/schemas/TimeSeriesEntry'
+        cohortLabels:
+          type: object
+          additionalProperties:
+            type: string
+        metadata:
+          $ref: '#/components/schemas/Metadata'
+    ProductWalletClass:
+      type: object
+      properties:
+        className:
+          type: string
+        activeWallets:
+          type: integer
+          format: int64
+        sharePct:
+          type: number
+          format: double
+        color:
+          type: string
+    ProductDashboardInvocationCreateCommand:
+      type: object
+      properties:
+        operation:
+          type: string
+          enum:
+          - PRODUCT_DASHBOARD
+        request:
+          $ref: '#/components/schemas/ProductDashboardInvocationRequest'
+      description: Create command for the PRODUCT_DASHBOARD analytics operation
+    ProductActivityPoint:
+      type: object
+      properties:
+        date:
+          type: string
+        transactions:
+          type: integer
+          format: int64
+        activeWallets:
+          type: integer
+          format: int64
+        newWallets:
+          type: integer
+          format: int64
+        returningWallets:
+          type: integer
+          format: int64
+        failedTransactions:
+          type: integer
+          format: int64
+        gasFeeNative:
+          type: number
+          format: double
+    CohortsInvocationRequest:
+      required:
+      - contractAddress
+      - endDate
+      - interval
+      - startDate
+      type: object
+      properties:
+        contractAddress:
+          type: string
+          example: '0x313416870A4da6F12505a550B67bB73c8E21D5d3'
+        interval:
+          type: string
+          example: weekly
+          enum:
+          - daily
+          - weekly
+          - monthly
+        startDate:
+          type: string
+          format: date
+          example: '2026-05-01'
+        endDate:
+          type: string
+          format: date
+          example: '2026-07-01'
+    CohortAnalysisResponse:
+      type: object
+      properties:
+        cohorts:
+          type: array
+          items:
+            $ref: '#/components/schemas/CohortData'
+    TokensInvocationRequest:
+      required:
+      - contractId
+      type: object
+      properties:
+        contractId:
+          type: string
+          example: '0x313416870A4da6F12505a550B67bB73c8E21D5d3'
+    DashboardInvocationCreateCommand:
+      type: object
+      properties:
+        operation:
+          type: string
+          enum:
+          - DASHBOARD
+        request:
+          $ref: '#/components/schemas/DashboardInvocationRequest'
+      description: Create command for the DASHBOARD analytics operation
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+x-refined-from:
+- moirailabs-com-openapi.json
+- moirailabs-com-openapi.yml
