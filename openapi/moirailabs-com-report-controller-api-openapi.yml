@@ -1,8 +1,7 @@
 openapi: 3.2.0
 info:
-  title: Moirailabs Com Report Controller API
+  title: OpenAPI definition Report Controller API
   version: v0
-  description: 'Operations tagged report-controller across 2 of this provider''s published API definitions: moirailabs-com-openapi.json, moirailabs-com-openapi.yml. Each path carries the servers of the definition it was published in.'
 servers:
 - url: http://api.moirailabs.com/api/v1
   description: Generated server url
@@ -52,9 +51,6 @@ paths:
                   $ref: '#/components/schemas/DailyReportResponse'
       summary: Get reports
       x-summary-source: derived
-    servers:
-    - url: http://api.moirailabs.com/api/v1
-      description: Generated server url
 components:
   schemas:
     DailyReportResponse:
@@ -113,6 +109,3 @@ components:
       type: http
       scheme: bearer
       bearerFormat: JWT
-x-refined-from:
-- moirailabs-com-openapi.json
-- moirailabs-com-openapi.yml

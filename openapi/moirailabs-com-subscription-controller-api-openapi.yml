@@ -1,8 +1,7 @@
 openapi: 3.2.0
 info:
-  title: Moirailabs Com Subscription Controller API
+  title: OpenAPI definition Subscription Controller API
   version: v0
-  description: 'Operations tagged subscription-controller across 2 of this provider''s published API definitions: moirailabs-com-openapi.json, moirailabs-com-openapi.yml. Each path carries the servers of the definition it was published in.'
 servers:
 - url: http://api.moirailabs.com/api/v1
   description: Generated server url
@@ -96,9 +95,6 @@ paths:
             '*/*':
               schema:
                 $ref: '#/components/schemas/SubscriptionResponse'
-    servers:
-    - url: http://api.moirailabs.com/api/v1
-      description: Generated server url
   /subscriptions:
     post:
       tags:
@@ -139,11 +135,49 @@ paths:
             '*/*':
               schema:
                 $ref: '#/components/schemas/SubscriptionResponse'
-    servers:
-    - url: http://api.moirailabs.com/api/v1
-      description: Generated server url
 components:
   schemas:
+    SubscriptionRequest:
+      required:
+      - endDate
+      - isActive
+      - planId
+      - startDate
+      type: object
+      properties:
+        planId:
+          type: string
+          format: uuid
+        paymentId:
+          type: string
+          format: uuid
+        startDate:
+          type: string
+          format: date-time
+        endDate:
+          type: string
+          format: date-time
+        isActive:
+          type: boolean
+    SubscriptionUpdateRequest:
+      required:
+      - planId
+      type: object
+      properties:
+        planId:
+          type: string
+          format: uuid
+        paymentId:
+          type: string
+          format: uuid
+        startDate:
+          type: string
+          format: date-time
+        endDate:
+          type: string
+          format: date-time
+        isActive:
+          type: boolean
     SubscriptionResponse:
       type: object
       properties:
@@ -173,52 +207,8 @@ components:
         updatedAt:
           type: string
           format: date-time
-    SubscriptionUpdateRequest:
-      required:
-      - planId
-      type: object
-      properties:
-        planId:
-          type: string
-          format: uuid
-        paymentId:
-          type: string
-          format: uuid
-        startDate:
-          type: string
-          format: date-time
-        endDate:
-          type: string
-          format: date-time
-        isActive:
-          type: boolean
-    SubscriptionRequest:
-      required:
-      - endDate
-      - isActive
-      - planId
-      - startDate
-      type: object
-      properties:
-        planId:
-          type: string
-          format: uuid
-        paymentId:
-          type: string
-          format: uuid
-        startDate:
-          type: string
-          format: date-time
-        endDate:
-          type: string
-          format: date-time
-        isActive:
-          type: boolean
   securitySchemes:
     bearerAuth:
       type: http
       scheme: bearer
       bearerFormat: JWT
-x-refined-from:
-- moirailabs-com-openapi.json
-- moirailabs-com-openapi.yml

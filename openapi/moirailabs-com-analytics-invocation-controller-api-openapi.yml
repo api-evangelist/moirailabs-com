@@ -1,8 +1,7 @@
 openapi: 3.2.0
 info:
-  title: Moirailabs Com Analytics Invocation Controller API
+  title: OpenAPI definition Analytics Invocation Controller API
   version: v0
-  description: 'Operations tagged analytics-invocation-controller across 2 of this provider''s published API definitions: moirailabs-com-openapi.json, moirailabs-com-openapi.yml. Each path carries the servers of the definition it was published in.'
 servers:
 - url: http://api.moirailabs.com/api/v1
   description: Generated server url
@@ -138,9 +137,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
-    servers:
-    - url: http://api.moirailabs.com/api/v1
-      description: Generated server url
   /analytics/invocations/{id}/cancel:
     post:
       tags:
@@ -198,9 +194,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/AnalyticsInvocationStatusResponse'
-    servers:
-    - url: http://api.moirailabs.com/api/v1
-      description: Generated server url
   /analytics/invocations/{id}:
     get:
       tags:
@@ -246,9 +239,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
-    servers:
-    - url: http://api.moirailabs.com/api/v1
-      description: Generated server url
   /analytics/invocations/{id}/result:
     get:
       tags:
@@ -337,57 +327,187 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
-    servers:
-    - url: http://api.moirailabs.com/api/v1
-      description: Generated server url
 components:
   schemas:
-    AnalyticsInvocationCreateRequest:
+    TokensInvocationRequest:
       required:
-      - operation
-      - request
+      - contractId
+      type: object
+      properties:
+        contractId:
+          type: string
+          example: '0x313416870A4da6F12505a550B67bB73c8E21D5d3'
+    ProductMethodPerformance:
+      type: object
+      properties:
+        methodName:
+          type: string
+        activeWallets:
+          type: integer
+          format: int64
+        txCount:
+          type: integer
+          format: int64
+        failedTx:
+          type: integer
+          format: int64
+        failureRatePct:
+          type: number
+          format: double
+        gasFeeNative:
+          type: number
+          format: double
+        failedGasFeeNative:
+          type: number
+          format: double
+        status:
+          type: string
+    ProductAnalyticsMeta:
+      type: object
+      properties:
+        contractAddress:
+          type: string
+        chainId:
+          type: integer
+          format: int32
+        chain:
+          type: string
+        dateFrom:
+          type: string
+        dateTo:
+          type: string
+        compareDateFrom:
+          type: string
+        compareDateTo:
+          type: string
+        blockFrom:
+          type: integer
+          format: int64
+        blockTo:
+          type: integer
+          format: int64
+        generatedAt:
+          type: string
+          description: UTC time when this dashboard result was calculated
+          format: date-time
+        dataThrough:
+          type:
+          - string
+          - 'null'
+          description: Timestamp of the latest transaction included in the snapshot
+          format: date-time
+        requestId:
+          type:
+          - string
+          - 'null'
+          description: Correlation ID also returned in X-Request-ID
+    DashboardInvocationCreateCommand:
       type: object
       properties:
         operation:
           type: string
           enum:
-          - COHORT_TRANSACTIONS
-          - COHORTS
           - DASHBOARD
-          - PRODUCT_DASHBOARD
-          - METRICS
-          - METHODS
-          - TOKENS
         request:
-          type: object
-          oneOf:
-          - $ref: '#/components/schemas/CohortTransactionsInvocationRequest'
-          - $ref: '#/components/schemas/CohortsInvocationRequest'
-          - $ref: '#/components/schemas/DashboardInvocationRequest'
-          - $ref: '#/components/schemas/ProductDashboardInvocationRequest'
-          - $ref: '#/components/schemas/MetricsInvocationRequest'
-          - $ref: '#/components/schemas/MethodsInvocationRequest'
-          - $ref: '#/components/schemas/TokensInvocationRequest'
-      discriminator:
-        propertyName: operation
-      oneOf:
-      - $ref: '#/components/schemas/CohortTransactionsInvocationCreateCommand'
-      - $ref: '#/components/schemas/CohortsInvocationCreateCommand'
-      - $ref: '#/components/schemas/DashboardInvocationCreateCommand'
-      - $ref: '#/components/schemas/ProductDashboardInvocationCreateCommand'
-      - $ref: '#/components/schemas/MetricsInvocationCreateCommand'
-      - $ref: '#/components/schemas/MethodsInvocationCreateCommand'
-      - $ref: '#/components/schemas/TokensInvocationCreateCommand'
-    CohortsInvocationCreateCommand:
+          $ref: '#/components/schemas/DashboardInvocationRequest'
+      description: Create command for the DASHBOARD analytics operation
+    CohortAnalysisResponse:
       type: object
       properties:
-        operation:
+        cohorts:
+          type: array
+          items:
+            $ref: '#/components/schemas/CohortData'
+    TokenAnalysisResponse:
+      type: object
+      properties:
+        name:
           type: string
-          enum:
-          - COHORTS
-        request:
-          $ref: '#/components/schemas/CohortsInvocationRequest'
-      description: Create command for the COHORTS analytics operation
+        value:
+          type: string
+        change:
+          type: string
+        amount:
+          type: string
+    ProductMetricsResponse:
+      type: object
+      properties:
+        txs:
+          type: array
+          items:
+            $ref: '#/components/schemas/TransactionWithCohort'
+        changeTxForTheLast30days:
+          type: number
+          format: double
+        amountUniqueWallets:
+          type: integer
+          format: int32
+        changeWalletsForTheLast30days:
+          type: number
+          format: double
+        totalTransactions:
+          type: integer
+          format: int32
+        last30DaysTx:
+          type: integer
+          format: int32
+        totalRetentionRate:
+          type: number
+          format: double
+        totalChurnRate:
+          type: number
+          format: double
+        dau:
+          type: object
+          additionalProperties:
+            type: integer
+            format: int64
+        mau:
+          type: object
+          additionalProperties:
+            type: integer
+            format: int64
+    ProductSectionStatus:
+      type: object
+      properties:
+        kpis:
+          type: string
+        activity:
+          type: string
+        cohortMethodMatrix:
+          type: string
+        classMethodMatrix:
+          type: string
+        methodPerformance:
+          type: string
+        walletClasses:
+          type: string
+        risk:
+          type: string
+        signals:
+          type: string
+      description: 'Per-section readiness: ready, preparing, syncing or unavailable'
+    ProductWalletClass:
+      type: object
+      properties:
+        className:
+          type: string
+        activeWallets:
+          type: integer
+          format: int64
+        sharePct:
+          type: number
+          format: double
+        color:
+          type: string
+    MethodAnalysisResponse:
+      type: object
+      properties:
+        methodUsageCount:
+          type: object
+          additionalProperties:
+            type: integer
+            format: int32
     ProductRiskSummary:
       type: object
       properties:
@@ -407,6 +527,41 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/ProductMethodPerformance'
+    CohortTransactionsInvocationRequest:
+      required:
+      - contractAddress
+      - granularity
+      - period
+      type: object
+      properties:
+        contractAddress:
+          type: string
+          example: '0x313416870A4da6F12505a550B67bB73c8E21D5d3'
+        period:
+          type: string
+          example: 1y
+          enum:
+          - 7d
+          - 30d
+          - 90d
+          - 1y
+        granularity:
+          type: string
+          example: day
+          enum:
+          - day
+          - week
+          - month
+    CohortsInvocationCreateCommand:
+      type: object
+      properties:
+        operation:
+          type: string
+          enum:
+          - COHORTS
+        request:
+          $ref: '#/components/schemas/CohortsInvocationRequest'
+      description: Create command for the COHORTS analytics operation
     TransactionWithCohort:
       type: object
       properties:
@@ -470,6 +625,45 @@ components:
         offsetDaysFromDeploy:
           type: integer
           format: int32
+    ProductActivityPoint:
+      type: object
+      properties:
+        date:
+          type: string
+        transactions:
+          type: integer
+          format: int64
+        activeWallets:
+          type: integer
+          format: int64
+        newWallets:
+          type: integer
+          format: int64
+        returningWallets:
+          type: integer
+          format: int64
+        failedTransactions:
+          type: integer
+          format: int64
+        gasFeeNative:
+          type: number
+          format: double
+    MetricsInvocationRequest:
+      required:
+      - contractAddress
+      type: object
+      properties:
+        contractAddress:
+          type: string
+          example: '0x313416870A4da6F12505a550B67bB73c8E21D5d3'
+    MethodsInvocationRequest:
+      required:
+      - contractAddress
+      type: object
+      properties:
+        contractAddress:
+          type: string
+          example: '0x313416870A4da6F12505a550B67bB73c8E21D5d3'
     ProductKpi:
       type: object
       properties:
@@ -496,45 +690,13 @@ components:
           type: integer
           description: Recommended number of fractional digits for frontend display
           format: int32
-    ProductSignal:
+    ProductMatrixDimension:
       type: object
       properties:
         key:
           type: string
-        tone:
+        label:
           type: string
-        title:
-          type: string
-        value:
-          type: string
-    TokensInvocationCreateCommand:
-      type: object
-      properties:
-        operation:
-          type: string
-          enum:
-          - TOKENS
-        request:
-          $ref: '#/components/schemas/TokensInvocationRequest'
-      description: Create command for the TOKENS analytics operation
-    MethodAnalysisResponse:
-      type: object
-      properties:
-        methodUsageCount:
-          type: object
-          additionalProperties:
-            type: integer
-            format: int32
-    CohortTransactionsInvocationCreateCommand:
-      type: object
-      properties:
-        operation:
-          type: string
-          enum:
-          - COHORT_TRANSACTIONS
-        request:
-          $ref: '#/components/schemas/CohortTransactionsInvocationRequest'
-      description: Create command for the COHORT_TRANSACTIONS analytics operation
     DashboardAnalyticsResponse:
       type: object
       properties:
@@ -554,46 +716,6 @@ components:
           $ref: '#/components/schemas/DashboardAnalyticsMeta'
         sectionStatus:
           $ref: '#/components/schemas/DashboardSectionStatus'
-    ProductMatrixDimension:
-      type: object
-      properties:
-        key:
-          type: string
-        label:
-          type: string
-    MethodsInvocationRequest:
-      required:
-      - contractAddress
-      type: object
-      properties:
-        contractAddress:
-          type: string
-          example: '0x313416870A4da6F12505a550B67bB73c8E21D5d3'
-    ProductMethodPerformance:
-      type: object
-      properties:
-        methodName:
-          type: string
-        activeWallets:
-          type: integer
-          format: int64
-        txCount:
-          type: integer
-          format: int64
-        failedTx:
-          type: integer
-          format: int64
-        failureRatePct:
-          type: number
-          format: double
-        gasFeeNative:
-          type: number
-          format: double
-        failedGasFeeNative:
-          type: number
-          format: double
-        status:
-          type: string
     TimeSeriesEntry:
       type: object
       properties:
@@ -612,209 +734,25 @@ components:
           additionalProperties:
             type: integer
             format: int32
-    ProductMatrixCell:
+    CohortData:
       type: object
       properties:
-        rowKey:
-          type: string
-        columnKey:
-          type: string
-        txCount:
-          type: integer
-          format: int64
-        activeWallets:
-          type: integer
-          format: int64
-        newWallets:
-          type: integer
-          format: int64
-        failedTx:
-          type: integer
-          format: int64
-        failureRatePct:
-          type: number
-          format: double
-        gasFeeNative:
-          type: number
-          format: double
-        failedGasFeeNative:
-          type: number
-          format: double
-    DashboardInvocationRequest:
-      required:
-      - contractAddress
-      type: object
-      properties:
-        contractAddress:
-          type: string
-          example: '0x313416870A4da6F12505a550B67bB73c8E21D5d3'
-        startDate:
+        cohortDate:
           type: string
           format: date
-          example: '2026-05-01'
-        endDate:
-          type: string
-          format: date
-          example: '2026-07-01'
-        interval:
-          type: string
-          default: weekly
-          enum:
-          - daily
-          - weekly
-          - monthly
-        granularity:
-          type: string
-          default: day
-          enum:
-          - day
-          - week
-          - month
-    ProductDashboardInvocationRequest:
-      required:
-      - contractAddress
-      - dateFrom
-      - dateTo
-      type: object
-      properties:
-        contractAddress:
-          type: string
-          example: '0x461ffa24b716f68c5a4fb583592f295db5f7ba36'
-        chainId:
-          minimum: 1
+        totalUsers:
           type: integer
           format: int32
-          example: 1
-        chain:
-          type: string
-          example: Ethereum
-        dateFrom:
-          type: string
-          format: date
-          example: '2026-07-23'
-        dateTo:
-          type: string
-          format: date
-          example: '2026-07-29'
-        compareDateFrom:
-          type: string
-          format: date
-          example: '2026-07-16'
-        compareDateTo:
-          type: string
-          format: date
-          example: '2026-07-22'
-        granularity:
-          type: string
-          default: day
-          enum:
-          - day
-        status:
-          type: string
-          default: all
-          enum:
-          - all
-          - success
-          - failed
-        topLimit:
-          maximum: 50
-          minimum: 1
-          type: integer
-          format: int32
-          default: 8
-    ProductMetricsResponse:
-      type: object
-      properties:
-        txs:
-          type: array
-          items:
-            $ref: '#/components/schemas/TransactionWithCohort'
-        changeTxForTheLast30days:
-          type: number
-          format: double
-        amountUniqueWallets:
-          type: integer
-          format: int32
-        changeWalletsForTheLast30days:
-          type: number
-          format: double
-        totalTransactions:
-          type: integer
-          format: int32
-        last30DaysTx:
-          type: integer
-          format: int32
-        totalRetentionRate:
-          type: number
-          format: double
-        totalChurnRate:
-          type: number
-          format: double
-        dau:
+        amountOfTx:
           type: object
           additionalProperties:
             type: integer
-            format: int64
-        mau:
+            format: int32
+        retentionRates:
           type: object
           additionalProperties:
-            type: integer
-            format: int64
-    DashboardSectionStatus:
-      type: object
-      properties:
-        metrics:
-          type: string
-        methods:
-          type: string
-        cohortsWeekly:
-          type: string
-        cohortTransactions7d:
-          type: string
-        cohortTransactions30d:
-          type: string
-      description: 'Per-section readiness: ready, preparing or unavailable'
-    ProductAnalyticsDashboardResponse:
-      type: object
-      properties:
-        meta:
-          $ref: '#/components/schemas/ProductAnalyticsMeta'
-        kpis:
-          type: array
-          items:
-            $ref: '#/components/schemas/ProductKpi'
-        activity:
-          type: array
-          items:
-            $ref: '#/components/schemas/ProductActivityPoint'
-        cohortMethodMatrix:
-          $ref: '#/components/schemas/ProductMatrix'
-        classMethodMatrix:
-          $ref: '#/components/schemas/ProductMatrix'
-        methodPerformance:
-          type: array
-          items:
-            $ref: '#/components/schemas/ProductMethodPerformance'
-        walletClasses:
-          type: array
-          items:
-            $ref: '#/components/schemas/ProductWalletClass'
-        risk:
-          $ref: '#/components/schemas/ProductRiskSummary'
-        signals:
-          type: array
-          items:
-            $ref: '#/components/schemas/ProductSignal'
-        sectionStatus:
-          $ref: '#/components/schemas/ProductSectionStatus'
-    MetricsInvocationRequest:
-      required:
-      - contractAddress
-      type: object
-      properties:
-        contractAddress:
-          type: string
-          example: '0x313416870A4da6F12505a550B67bB73c8E21D5d3'
+            type: number
+            format: double
     AnalyticsInvocationStatusResponse:
       type: object
       properties:
@@ -882,6 +820,51 @@ components:
           format: date-time
         links:
           $ref: '#/components/schemas/AnalyticsInvocationLinks'
+    MetricsInvocationCreateCommand:
+      type: object
+      properties:
+        operation:
+          type: string
+          enum:
+          - METRICS
+        request:
+          $ref: '#/components/schemas/MetricsInvocationRequest'
+      description: Create command for the METRICS analytics operation
+    AnalyticsInvocationLinks:
+      type: object
+      properties:
+        self:
+          type: string
+        result:
+          type: string
+        cancel:
+          type: string
+    CohortsInvocationRequest:
+      required:
+      - contractAddress
+      - endDate
+      - interval
+      - startDate
+      type: object
+      properties:
+        contractAddress:
+          type: string
+          example: '0x313416870A4da6F12505a550B67bB73c8E21D5d3'
+        interval:
+          type: string
+          example: weekly
+          enum:
+          - daily
+          - weekly
+          - monthly
+        startDate:
+          type: string
+          format: date
+          example: '2026-05-01'
+        endDate:
+          type: string
+          format: date
+          example: '2026-07-01'
     ProductMatrix:
       type: object
       properties:
@@ -897,42 +880,6 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/ProductMatrixCell'
-    TokenAnalysisResponse:
-      type: object
-      properties:
-        name:
-          type: string
-        value:
-          type: string
-        change:
-          type: string
-        amount:
-          type: string
-    CohortTransactionsInvocationRequest:
-      required:
-      - contractAddress
-      - granularity
-      - period
-      type: object
-      properties:
-        contractAddress:
-          type: string
-          example: '0x313416870A4da6F12505a550B67bB73c8E21D5d3'
-        period:
-          type: string
-          example: 1y
-          enum:
-          - 7d
-          - 30d
-          - 90d
-          - 1y
-        granularity:
-          type: string
-          example: day
-          enum:
-          - day
-          - week
-          - month
     MethodsInvocationCreateCommand:
       type: object
       properties:
@@ -943,125 +890,161 @@ components:
         request:
           $ref: '#/components/schemas/MethodsInvocationRequest'
       description: Create command for the METHODS analytics operation
-    ProductAnalyticsMeta:
-      type: object
-      properties:
-        contractAddress:
-          type: string
-        chainId:
-          type: integer
-          format: int32
-        chain:
-          type: string
-        dateFrom:
-          type: string
-        dateTo:
-          type: string
-        compareDateFrom:
-          type: string
-        compareDateTo:
-          type: string
-        blockFrom:
-          type: integer
-          format: int64
-        blockTo:
-          type: integer
-          format: int64
-        generatedAt:
-          type: string
-          description: UTC time when this dashboard result was calculated
-          format: date-time
-        dataThrough:
-          type:
-          - string
-          - 'null'
-          description: Timestamp of the latest transaction included in the snapshot
-          format: date-time
-        requestId:
-          type:
-          - string
-          - 'null'
-          description: Correlation ID also returned in X-Request-ID
-    AnalyticsInvocationLinks:
-      type: object
-      properties:
-        self:
-          type: string
-        result:
-          type: string
-        cancel:
-          type: string
-    MetricsInvocationCreateCommand:
+    CohortTransactionsInvocationCreateCommand:
       type: object
       properties:
         operation:
           type: string
           enum:
-          - METRICS
+          - COHORT_TRANSACTIONS
         request:
-          $ref: '#/components/schemas/MetricsInvocationRequest'
-      description: Create command for the METRICS analytics operation
-    ProductSectionStatus:
+          $ref: '#/components/schemas/CohortTransactionsInvocationRequest'
+      description: Create command for the COHORT_TRANSACTIONS analytics operation
+    DashboardSectionStatus:
       type: object
       properties:
-        kpis:
+        metrics:
           type: string
-        activity:
+        methods:
           type: string
-        cohortMethodMatrix:
+        cohortsWeekly:
           type: string
-        classMethodMatrix:
+        cohortTransactions7d:
           type: string
-        methodPerformance:
+        cohortTransactions30d:
           type: string
-        walletClasses:
-          type: string
-        risk:
-          type: string
-        signals:
-          type: string
-      description: 'Per-section readiness: ready, preparing, syncing or unavailable'
-    ErrorResponse:
+      description: 'Per-section readiness: ready, preparing or unavailable'
+    ProductDashboardInvocationRequest:
+      required:
+      - contractAddress
+      - dateFrom
+      - dateTo
       type: object
       properties:
-        code:
-          type: string
-        message:
-          type: string
-        details:
-          type: string
-    CohortData:
-      type: object
-      properties:
-        cohortDate:
-          type: string
-          format: date
-        totalUsers:
-          type: integer
-          format: int32
-        amountOfTx:
-          type: object
-          additionalProperties:
-            type: integer
-            format: int32
-        retentionRates:
-          type: object
-          additionalProperties:
-            type: number
-            format: double
-    Metadata:
-      type: object
-      properties:
-        totalPeriods:
-          type: integer
-          format: int32
-        granularity:
-          type: string
         contractAddress:
           type: string
-        blockNumber:
+          example: '0x461ffa24b716f68c5a4fb583592f295db5f7ba36'
+        chainId:
+          minimum: 1
           type: integer
-          format: int64
+          format: int32
+          example: 1
+        chain:
+          type: string
+          example: Ethereum
+        dateFrom:
+          type: string
+          format: date
+          example: '2026-07-23'
+        dateTo:
+          type: string
+          format: date
+          example: '2026-07-29'
+        compareDateFrom:
+          type: string
+          format: date
+          example: '2026-07-16'
+        compareDateTo:
+          type: string
+          format: date
+          example: '2026-07-22'
+        granularity:
+          type: string
+          default: day
+          enum:
+          - day
+        status:
+          type: string
+          default: all
+          enum:
+          - all
+          - success
+          - failed
+        topLimit:
+          maximum: 50
+          minimum: 1
+          type: integer
+          format: int32
+          default: 8
+    AnalyticsInvocationCreateRequest:
+      required:
+      - operation
+      - request
+      type: object
+      properties:
+        operation:
+          type: string
+          enum:
+          - COHORT_TRANSACTIONS
+          - COHORTS
+          - DASHBOARD
+          - PRODUCT_DASHBOARD
+          - METRICS
+          - METHODS
+          - TOKENS
+        request:
+          type: object
+          oneOf:
+          - $ref: '#/components/schemas/CohortTransactionsInvocationRequest'
+          - $ref: '#/components/schemas/CohortsInvocationRequest'
+          - $ref: '#/components/schemas/DashboardInvocationRequest'
+          - $ref: '#/components/schemas/ProductDashboardInvocationRequest'
+          - $ref: '#/components/schemas/MetricsInvocationRequest'
+          - $ref: '#/components/schemas/MethodsInvocationRequest'
+          - $ref: '#/components/schemas/TokensInvocationRequest'
+      discriminator:
+        propertyName: operation
+      oneOf:
+      - $ref: '#/components/schemas/CohortTransactionsInvocationCreateCommand'
+      - $ref: '#/components/schemas/CohortsInvocationCreateCommand'
+      - $ref: '#/components/schemas/DashboardInvocationCreateCommand'
+      - $ref: '#/components/schemas/ProductDashboardInvocationCreateCommand'
+      - $ref: '#/components/schemas/MetricsInvocationCreateCommand'
+      - $ref: '#/components/schemas/MethodsInvocationCreateCommand'
+      - $ref: '#/components/schemas/TokensInvocationCreateCommand'
+    TokensInvocationCreateCommand:
+      type: object
+      properties:
+        operation:
+          type: string
+          enum:
+          - TOKENS
+        request:
+          $ref: '#/components/schemas/TokensInvocationRequest'
+      description: Create command for the TOKENS analytics operation
+    ProductAnalyticsDashboardResponse:
+      type: object
+      properties:
+        meta:
+          $ref: '#/components/schemas/ProductAnalyticsMeta'
+        kpis:
+          type: array
+          items:
+            $ref: '#/components/schemas/ProductKpi'
+        activity:
+          type: array
+          items:
+            $ref: '#/components/schemas/ProductActivityPoint'
+        cohortMethodMatrix:
+          $ref: '#/components/schemas/ProductMatrix'
+        classMethodMatrix:
+          $ref: '#/components/schemas/ProductMatrix'
+        methodPerformance:
+          type: array
+          items:
+            $ref: '#/components/schemas/ProductMethodPerformance'
+        walletClasses:
+          type: array
+          items:
+            $ref: '#/components/schemas/ProductWalletClass'
+        risk:
+          $ref: '#/components/schemas/ProductRiskSummary'
+        signals:
+          type: array
+          items:
+            $ref: '#/components/schemas/ProductSignal'
+        sectionStatus:
+          $ref: '#/components/schemas/ProductSectionStatus'
     DashboardAnalyticsMeta:
       type: object
       properties:
@@ -1100,6 +1083,47 @@ components:
           type: string
         granularity:
           type: string
+    ProductSignal:
+      type: object
+      properties:
+        key:
+          type: string
+        tone:
+          type: string
+        title:
+          type: string
+        value:
+          type: string
+    DashboardInvocationRequest:
+      required:
+      - contractAddress
+      type: object
+      properties:
+        contractAddress:
+          type: string
+          example: '0x313416870A4da6F12505a550B67bB73c8E21D5d3'
+        startDate:
+          type: string
+          format: date
+          example: '2026-05-01'
+        endDate:
+          type: string
+          format: date
+          example: '2026-07-01'
+        interval:
+          type: string
+          default: weekly
+          enum:
+          - daily
+          - weekly
+          - monthly
+        granularity:
+          type: string
+          default: day
+          enum:
+          - day
+          - week
+          - month
     CohortTransactionResponse:
       type: object
       properties:
@@ -1113,19 +1137,56 @@ components:
             type: string
         metadata:
           $ref: '#/components/schemas/Metadata'
-    ProductWalletClass:
+    Metadata:
       type: object
       properties:
-        className:
+        totalPeriods:
+          type: integer
+          format: int32
+        granularity:
           type: string
+        contractAddress:
+          type: string
+        blockNumber:
+          type: integer
+          format: int64
+    ErrorResponse:
+      type: object
+      properties:
+        code:
+          type: string
+        message:
+          type: string
+        details:
+          type: string
+    ProductMatrixCell:
+      type: object
+      properties:
+        rowKey:
+          type: string
+        columnKey:
+          type: string
+        txCount:
+          type: integer
+          format: int64
         activeWallets:
           type: integer
           format: int64
-        sharePct:
+        newWallets:
+          type: integer
+          format: int64
+        failedTx:
+          type: integer
+          format: int64
+        failureRatePct:
           type: number
           format: double
-        color:
-          type: string
+        gasFeeNative:
+          type: number
+          format: double
+        failedGasFeeNative:
+          type: number
+          format: double
     ProductDashboardInvocationCreateCommand:
       type: object
       properties:
@@ -1136,85 +1197,8 @@ components:
         request:
           $ref: '#/components/schemas/ProductDashboardInvocationRequest'
       description: Create command for the PRODUCT_DASHBOARD analytics operation
-    ProductActivityPoint:
-      type: object
-      properties:
-        date:
-          type: string
-        transactions:
-          type: integer
-          format: int64
-        activeWallets:
-          type: integer
-          format: int64
-        newWallets:
-          type: integer
-          format: int64
-        returningWallets:
-          type: integer
-          format: int64
-        failedTransactions:
-          type: integer
-          format: int64
-        gasFeeNative:
-          type: number
-          format: double
-    CohortsInvocationRequest:
-      required:
-      - contractAddress
-      - endDate
-      - interval
-      - startDate
-      type: object
-      properties:
-        contractAddress:
-          type: string
-          example: '0x313416870A4da6F12505a550B67bB73c8E21D5d3'
-        interval:
-          type: string
-          example: weekly
-          enum:
-          - daily
-          - weekly
-          - monthly
-        startDate:
-          type: string
-          format: date
-          example: '2026-05-01'
-        endDate:
-          type: string
-          format: date
-          example: '2026-07-01'
-    CohortAnalysisResponse:
-      type: object
-      properties:
-        cohorts:
-          type: array
-          items:
-            $ref: '#/components/schemas/CohortData'
-    TokensInvocationRequest:
-      required:
-      - contractId
-      type: object
-      properties:
-        contractId:
-          type: string
-          example: '0x313416870A4da6F12505a550B67bB73c8E21D5d3'
-    DashboardInvocationCreateCommand:
-      type: object
-      properties:
-        operation:
-          type: string
-          enum:
-          - DASHBOARD
-        request:
-          $ref: '#/components/schemas/DashboardInvocationRequest'
-      description: Create command for the DASHBOARD analytics operation
   securitySchemes:
     bearerAuth:
       type: http
       scheme: bearer
       bearerFormat: JWT
-x-refined-from:
-- moirailabs-com-openapi.json
-- moirailabs-com-openapi.yml

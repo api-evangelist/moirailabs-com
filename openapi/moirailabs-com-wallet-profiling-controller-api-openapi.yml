@@ -1,8 +1,7 @@
 openapi: 3.2.0
 info:
-  title: Moirailabs Com Wallet Profiling Controller API
+  title: OpenAPI definition Wallet Profiling Controller API
   version: v0
-  description: 'Operations tagged wallet-profiling-controller across 2 of this provider''s published API definitions: moirailabs-com-openapi.json, moirailabs-com-openapi.yml. Each path carries the servers of the definition it was published in.'
 servers:
 - url: http://api.moirailabs.com/api/v1
   description: Generated server url
@@ -51,9 +50,6 @@ paths:
                 $ref: '#/components/schemas/WalletProfilingResponse'
       summary: Simple profile
       x-summary-source: derived
-    servers:
-    - url: http://api.moirailabs.com/api/v1
-      description: Generated server url
   /wallet-profiling/enriched:
     post:
       tags:
@@ -99,9 +95,6 @@ paths:
                 $ref: '#/components/schemas/WalletProfilingResponse'
       summary: Enriched profile
       x-summary-source: derived
-    servers:
-    - url: http://api.moirailabs.com/api/v1
-      description: Generated server url
   /wallet-profiling/requests/{requestId}:
     get:
       tags:
@@ -142,9 +135,6 @@ paths:
                 $ref: '#/components/schemas/WalletProfilingResponse'
       summary: Get request status
       x-summary-source: derived
-    servers:
-    - url: http://api.moirailabs.com/api/v1
-      description: Generated server url
   /subscriptions/current/wallet-profiling-quota:
     get:
       tags:
@@ -179,22 +169,18 @@ paths:
                 $ref: '#/components/schemas/WalletProfilingQuotaResponse'
       summary: Get current quota
       x-summary-source: derived
-    servers:
-    - url: http://api.moirailabs.com/api/v1
-      description: Generated server url
 components:
   schemas:
-    WalletProfilingSimpleRequest:
-      required:
-      - chainId
-      - walletAddress
+    WalletProfilingBillingResponse:
       type: object
       properties:
-        walletAddress:
-          type: string
-        chainId:
+        productUnits:
           type: integer
           format: int32
+        productPricingUnit:
+          type: string
+        chargeStatus:
+          type: string
     WalletProfilingResponse:
       type: object
       properties:
@@ -226,18 +212,6 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/WalletProfilingClassResponse'
-    WalletProfilingRateLimitResponse:
-      type: object
-      properties:
-        limit:
-          type: integer
-          format: int32
-        remaining:
-          type: integer
-          format: int32
-        resetAt:
-          type: string
-          format: date-time
     WalletProfilingClassResponse:
       type: object
       properties:
@@ -254,16 +228,42 @@ components:
           type: object
           additionalProperties:
             type: object
-    WalletProfilingBillingResponse:
+    WalletProfilingSimpleRequest:
+      required:
+      - chainId
+      - walletAddress
       type: object
       properties:
-        productUnits:
+        walletAddress:
+          type: string
+        chainId:
           type: integer
           format: int32
-        productPricingUnit:
+    WalletProfilingRateLimitResponse:
+      type: object
+      properties:
+        limit:
+          type: integer
+          format: int32
+        remaining:
+          type: integer
+          format: int32
+        resetAt:
           type: string
-        chargeStatus:
+          format: date-time
+    WalletProfilingEnrichedRequest:
+      required:
+      - chainId
+      - walletAddress
+      type: object
+      properties:
+        walletAddress:
           type: string
+        chainId:
+          type: integer
+          format: int32
+        forceRefresh:
+          type: boolean
     WalletProfilingQuotaResponse:
       type: object
       properties:
@@ -294,24 +294,8 @@ components:
           type: boolean
         dataPreparationRequired:
           type: boolean
-    WalletProfilingEnrichedRequest:
-      required:
-      - chainId
-      - walletAddress
-      type: object
-      properties:
-        walletAddress:
-          type: string
-        chainId:
-          type: integer
-          format: int32
-        forceRefresh:
-          type: boolean
   securitySchemes:
     bearerAuth:
       type: http
       scheme: bearer
       bearerFormat: JWT
-x-refined-from:
-- moirailabs-com-openapi.json
-- moirailabs-com-openapi.yml

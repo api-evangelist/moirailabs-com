@@ -1,8 +1,7 @@
 {
   "provider": "moirailabs-com",
   "sources": [
-    "_original/moirailabs-com-openapi.json",
-    "moirailabs-com-openapi.yml"
+    "_original/moirailabs-com-openapi.json"
   ],
   "outputs": [
     "moirailabs-com-analytics-controller-api-openapi.yml",
@@ -15,12 +14,11 @@
     "moirailabs-com-user-info-controller-api-openapi.yml",
     "moirailabs-com-wallet-profiling-controller-api-openapi.yml"
   ],
-  "archived": [
-    "archived openapi/moirailabs-com-openapi.yml"
-  ],
+  "archived": [],
   "errors": [],
   "warnings": [],
   "notes": [
+    "1 archived document(s) dropped as subsets of other archived documents",
     "sourced from openapi/_original/ (1 archived document(s)); previously refined output at the top level was skipped rather than re-split",
     "moirailabs-com-openapi.json: upgraded openapi 3.0.1 -> OpenAPI 3.2.0",
     "moirailabs-com-openapi.json: declared missing tag: analytics-controller",
@@ -32,26 +30,18 @@
     "moirailabs-com-openapi.json: declared missing tag: subscription-controller",
     "moirailabs-com-openapi.json: declared missing tag: user-info-controller",
     "moirailabs-com-openapi.json: declared missing tag: wallet-profiling-controller",
-    "moirailabs-com-openapi.yml: upgraded openapi 3.0.1 -> OpenAPI 3.2.0",
-    "moirailabs-com-openapi.yml: declared missing tag: analytics-controller",
-    "moirailabs-com-openapi.yml: declared missing tag: analytics-invocation-controller",
-    "moirailabs-com-openapi.yml: declared missing tag: contract-info-controller",
-    "moirailabs-com-openapi.yml: declared missing tag: functions-controller",
-    "moirailabs-com-openapi.yml: declared missing tag: plan-controller",
-    "moirailabs-com-openapi.yml: declared missing tag: report-controller",
-    "moirailabs-com-openapi.yml: declared missing tag: subscription-controller",
-    "moirailabs-com-openapi.yml: declared missing tag: user-info-controller",
-    "moirailabs-com-openapi.yml: declared missing tag: wallet-profiling-controller",
-    "tag 'analytics-controller' spans 2 source specs (moirailabs-com-openapi.json, moirailabs-com-openapi.yml): per-path servers applied",
-    "tag 'analytics-invocation-controller' spans 2 source specs (moirailabs-com-openapi.json, moirailabs-com-openapi.yml): per-path servers applied",
-    "tag 'contract-info-controller' spans 2 source specs (moirailabs-com-openapi.json, moirailabs-com-openapi.yml): per-path servers applied",
-    "tag 'functions-controller' spans 2 source specs (moirailabs-com-openapi.json, moirailabs-com-openapi.yml): per-path servers applied",
-    "tag 'plan-controller' spans 2 source specs (moirailabs-com-openapi.json, moirailabs-com-openapi.yml): per-path servers applied",
-    "tag 'report-controller' spans 2 source specs (moirailabs-com-openapi.json, moirailabs-com-openapi.yml): per-path servers applied",
-    "tag 'subscription-controller' spans 2 source specs (moirailabs-com-openapi.json, moirailabs-com-openapi.yml): per-path servers applied",
-    "tag 'user-info-controller' spans 2 source specs (moirailabs-com-openapi.json, moirailabs-com-openapi.yml): per-path servers applied",
-    "tag 'wallet-profiling-controller' spans 2 source specs (moirailabs-com-openapi.json, moirailabs-com-openapi.yml): per-path servers applied",
-    "apis.yml register: written (+9 apis, 10 total)"
+    "apis.yml register: already-registered"
   ],
-  "skipped": []
+  "skipped": [
+    "_original/moirailabs-com-openapi.yml: archived document superseded by a larger archived document",
+    "moirailabs-com-analytics-controller-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "moirailabs-com-analytics-invocation-controller-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "moirailabs-com-contract-info-controller-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "moirailabs-com-functions-controller-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "moirailabs-com-plan-controller-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "moirailabs-com-report-controller-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "moirailabs-com-subscription-controller-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "moirailabs-com-user-info-controller-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "moirailabs-com-wallet-profiling-controller-api-openapi.yml: previously refined output, superseded by openapi/_original/"
+  ]
 }

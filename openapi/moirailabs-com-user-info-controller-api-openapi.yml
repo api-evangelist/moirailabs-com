@@ -1,8 +1,7 @@
 openapi: 3.2.0
 info:
-  title: Moirailabs Com User Info Controller API
+  title: OpenAPI definition User Info Controller API
   version: v0
-  description: 'Operations tagged user-info-controller across 2 of this provider''s published API definitions: moirailabs-com-openapi.json, moirailabs-com-openapi.yml. Each path carries the servers of the definition it was published in.'
 servers:
 - url: http://api.moirailabs.com/api/v1
   description: Generated server url
@@ -96,9 +95,6 @@ paths:
             '*/*':
               schema:
                 $ref: '#/components/schemas/UserInfoResponse'
-    servers:
-    - url: http://api.moirailabs.com/api/v1
-      description: Generated server url
   /users:
     post:
       tags:
@@ -140,9 +136,6 @@ paths:
               schema:
                 $ref: '#/components/schemas/UserInfoResponse'
       security: []
-    servers:
-    - url: http://api.moirailabs.com/api/v1
-      description: Generated server url
   /users/registration-status:
     get:
       tags:
@@ -189,27 +182,8 @@ paths:
               schema:
                 $ref: '#/components/schemas/UserRegistrationStatusResponse'
       security: []
-    servers:
-    - url: http://api.moirailabs.com/api/v1
-      description: Generated server url
 components:
   schemas:
-    UserInfoResponse:
-      type: object
-      properties:
-        id:
-          type: string
-          format: uuid
-        email:
-          type: string
-        company:
-          type: string
-        firstName:
-          type: string
-        lastName:
-          type: string
-        country:
-          type: string
     UserRegistrationStatusResponse:
       type: object
       properties:
@@ -244,11 +218,24 @@ components:
           maxLength: 255
           minLength: 0
           type: string
+    UserInfoResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        email:
+          type: string
+        company:
+          type: string
+        firstName:
+          type: string
+        lastName:
+          type: string
+        country:
+          type: string
   securitySchemes:
     bearerAuth:
       type: http
       scheme: bearer
       bearerFormat: JWT
-x-refined-from:
-- moirailabs-com-openapi.json
-- moirailabs-com-openapi.yml

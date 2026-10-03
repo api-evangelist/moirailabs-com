@@ -1,8 +1,7 @@
 openapi: 3.2.0
 info:
-  title: Moirailabs Com Contract Info Controller API
+  title: OpenAPI definition Contract Info Controller API
   version: v0
-  description: 'Operations tagged contract-info-controller across 2 of this provider''s published API definitions: moirailabs-com-openapi.json, moirailabs-com-openapi.yml. Each path carries the servers of the definition it was published in.'
 servers:
 - url: http://api.moirailabs.com/api/v1
   description: Generated server url
@@ -51,9 +50,6 @@ paths:
             '*/*':
               schema:
                 $ref: '#/components/schemas/ContractInfoResponse'
-    servers:
-    - url: http://api.moirailabs.com/api/v1
-      description: Generated server url
   /contracts/{id}:
     get:
       tags:
@@ -93,9 +89,6 @@ paths:
             '*/*':
               schema:
                 $ref: '#/components/schemas/ContractInfoResponse'
-    servers:
-    - url: http://api.moirailabs.com/api/v1
-      description: Generated server url
   /contracts/{contractAddress}/fetchdata:
     get:
       tags:
@@ -145,9 +138,6 @@ paths:
             '*/*':
               schema:
                 $ref: '#/components/schemas/ContractInfoResponse'
-    servers:
-    - url: http://api.moirailabs.com/api/v1
-      description: Generated server url
   /contracts/user:
     get:
       tags:
@@ -184,9 +174,6 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/ContractInfoResponse'
-    servers:
-    - url: http://api.moirailabs.com/api/v1
-      description: Generated server url
   /contracts/status:
     get:
       tags:
@@ -226,9 +213,6 @@ paths:
             '*/*':
               schema:
                 $ref: '#/components/schemas/ContractSyncStatusResponse'
-    servers:
-    - url: http://api.moirailabs.com/api/v1
-      description: Generated server url
   /contracts/{contractAddress}:
     delete:
       tags:
@@ -268,27 +252,23 @@ paths:
             '*/*':
               schema:
                 $ref: '#/components/schemas/ContractInfoResponse'
-    servers:
-    - url: http://api.moirailabs.com/api/v1
-      description: Generated server url
 components:
   schemas:
-    ContractInfoRequest:
-      required:
-      - address
-      - chainId
+    ContractInfoResponse:
       type: object
       properties:
+        id:
+          type: string
+          format: uuid
         chainId:
           type: integer
           format: int32
+        userId:
+          type: string
+          format: uuid
         address:
-          maxLength: 42
-          minLength: 42
           type: string
         type:
-          maxLength: 255
-          minLength: 0
           type: string
     ContractSyncStatusResponse:
       type: object
@@ -309,27 +289,25 @@ components:
           format: int32
         syncing:
           type: boolean
-    ContractInfoResponse:
+    ContractInfoRequest:
+      required:
+      - address
+      - chainId
       type: object
       properties:
-        id:
-          type: string
-          format: uuid
         chainId:
           type: integer
           format: int32
-        userId:
-          type: string
-          format: uuid
         address:
+          maxLength: 42
+          minLength: 42
           type: string
         type:
+          maxLength: 255
+          minLength: 0
           type: string
   securitySchemes:
     bearerAuth:
       type: http
       scheme: bearer
       bearerFormat: JWT
-x-refined-from:
-- moirailabs-com-openapi.json
-- moirailabs-com-openapi.yml

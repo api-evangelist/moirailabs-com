@@ -1,8 +1,7 @@
 openapi: 3.2.0
 info:
-  title: Moirailabs Com Plan Controller API
+  title: OpenAPI definition Plan Controller API
   version: v0
-  description: 'Operations tagged plan-controller across 2 of this provider''s published API definitions: moirailabs-com-openapi.json, moirailabs-com-openapi.yml. Each path carries the servers of the definition it was published in.'
 servers:
 - url: http://api.moirailabs.com/api/v1
   description: Generated server url
@@ -134,9 +133,6 @@ paths:
                 type: string
                 example: 8df31080-3b78-4e63-a67d-c2d107190f3c
       security: []
-    servers:
-    - url: http://api.moirailabs.com/api/v1
-      description: Generated server url
   /plans:
     get:
       tags:
@@ -214,9 +210,6 @@ paths:
               schema:
                 $ref: '#/components/schemas/PlanResponse'
       security: []
-    servers:
-    - url: http://api.moirailabs.com/api/v1
-      description: Generated server url
   /plans/active:
     get:
       tags:
@@ -254,9 +247,6 @@ paths:
                 items:
                   $ref: '#/components/schemas/PlanResponse'
       security: []
-    servers:
-    - url: http://api.moirailabs.com/api/v1
-      description: Generated server url
 components:
   schemas:
     PlanResponse:
@@ -308,6 +298,3 @@ components:
       type: http
       scheme: bearer
       bearerFormat: JWT
-x-refined-from:
-- moirailabs-com-openapi.json
-- moirailabs-com-openapi.yml
