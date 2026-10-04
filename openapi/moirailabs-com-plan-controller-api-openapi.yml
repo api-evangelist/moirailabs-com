@@ -249,28 +249,6 @@ paths:
       security: []
 components:
   schemas:
-    PlanResponse:
-      type: object
-      properties:
-        id:
-          type: string
-          format: uuid
-        name:
-          type: string
-        contractAmount:
-          type: integer
-          format: int32
-        period:
-          type: integer
-          format: int32
-        price:
-          type: number
-          format: double
-        is_active:
-          type: boolean
-        enrichedProfilingRequestsPerPeriod:
-          type: integer
-          format: int32
     PlanRequest:
       required:
       - contractAmount
@@ -290,6 +268,28 @@ components:
           format: int32
         price:
           type: number
+        enrichedProfilingRequestsPerPeriod:
+          type: integer
+          format: int32
+    PlanResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        contractAmount:
+          type: integer
+          format: int32
+        period:
+          type: integer
+          format: int32
+        price:
+          type: number
+          format: double
+        is_active:
+          type: boolean
         enrichedProfilingRequestsPerPeriod:
           type: integer
           format: int32

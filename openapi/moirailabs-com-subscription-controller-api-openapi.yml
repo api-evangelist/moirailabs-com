@@ -137,28 +137,6 @@ paths:
                 $ref: '#/components/schemas/SubscriptionResponse'
 components:
   schemas:
-    SubscriptionRequest:
-      required:
-      - endDate
-      - isActive
-      - planId
-      - startDate
-      type: object
-      properties:
-        planId:
-          type: string
-          format: uuid
-        paymentId:
-          type: string
-          format: uuid
-        startDate:
-          type: string
-          format: date-time
-        endDate:
-          type: string
-          format: date-time
-        isActive:
-          type: boolean
     SubscriptionUpdateRequest:
       required:
       - planId
@@ -207,6 +185,28 @@ components:
         updatedAt:
           type: string
           format: date-time
+    SubscriptionRequest:
+      required:
+      - endDate
+      - isActive
+      - planId
+      - startDate
+      type: object
+      properties:
+        planId:
+          type: string
+          format: uuid
+        paymentId:
+          type: string
+          format: uuid
+        startDate:
+          type: string
+          format: date-time
+        endDate:
+          type: string
+          format: date-time
+        isActive:
+          type: boolean
   securitySchemes:
     bearerAuth:
       type: http

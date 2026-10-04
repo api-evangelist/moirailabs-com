@@ -184,11 +184,6 @@ paths:
       security: []
 components:
   schemas:
-    UserRegistrationStatusResponse:
-      type: object
-      properties:
-        registered:
-          type: boolean
     UserInfoRequest:
       required:
       - email
@@ -234,6 +229,11 @@ components:
           type: string
         country:
           type: string
+    UserRegistrationStatusResponse:
+      type: object
+      properties:
+        registered:
+          type: boolean
   securitySchemes:
     bearerAuth:
       type: http
