@@ -152,3 +152,38 @@ api_access_by_tier:
     (Enterprise). The OpenAPI does not express these tiers; what "Limited" excludes is not published.'
 payment_methods: 'Terms of Service section 4: supported cryptocurrencies or payment cards, processed by third parties;
   the agent card A2P extension names rails: [crypto_contract]'
+x-canonical:
+  generated: '2026-10-08'
+  vocabulary: all/0-working/economics/plans-canonical.yml
+  models:
+  - subscription
+  units: []
+  plans:
+  - name: entusiast
+    access: other
+    model: subscription
+    model_how: derived
+    units: []
+    periods:
+    - other
+  - name: startup
+    access: other
+    model: subscription
+    model_how: derived
+    units: []
+    periods:
+    - other
+  - name: business
+    access: other
+    model: subscription
+    model_how: derived
+    units: []
+    periods:
+    - other
+  - name: enterprise
+    access: other
+    model: subscription
+    model_how: derived
+    units: []
+    periods:
+    - other
