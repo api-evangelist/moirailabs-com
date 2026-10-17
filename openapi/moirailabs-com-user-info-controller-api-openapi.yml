@@ -184,6 +184,27 @@ paths:
       security: []
 components:
   schemas:
+    UserInfoResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        email:
+          type: string
+        company:
+          type: string
+        firstName:
+          type: string
+        lastName:
+          type: string
+        country:
+          type: string
+    UserRegistrationStatusResponse:
+      type: object
+      properties:
+        registered:
+          type: boolean
     UserInfoRequest:
       required:
       - email
@@ -213,27 +234,6 @@ components:
           maxLength: 255
           minLength: 0
           type: string
-    UserInfoResponse:
-      type: object
-      properties:
-        id:
-          type: string
-          format: uuid
-        email:
-          type: string
-        company:
-          type: string
-        firstName:
-          type: string
-        lastName:
-          type: string
-        country:
-          type: string
-    UserRegistrationStatusResponse:
-      type: object
-      properties:
-        registered:
-          type: boolean
   securitySchemes:
     bearerAuth:
       type: http

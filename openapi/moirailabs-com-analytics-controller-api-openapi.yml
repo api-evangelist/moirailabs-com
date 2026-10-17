@@ -430,182 +430,6 @@ paths:
                 $ref: '#/components/schemas/CohortTransactionResponse'
 components:
   schemas:
-    CohortAnalysisResponse:
-      type: object
-      properties:
-        cohorts:
-          type: array
-          items:
-            $ref: '#/components/schemas/CohortData'
-    ProductWalletClass:
-      type: object
-      properties:
-        className:
-          type: string
-        activeWallets:
-          type: integer
-          format: int64
-        sharePct:
-          type: number
-          format: double
-        color:
-          type: string
-    DashboardAnalyticsResponse:
-      type: object
-      properties:
-        contractAddress:
-          type: string
-        metrics:
-          $ref: '#/components/schemas/ProductMetricsResponse'
-        methods:
-          $ref: '#/components/schemas/MethodAnalysisResponse'
-        cohortsWeekly:
-          $ref: '#/components/schemas/CohortAnalysisResponse'
-        cohortTransactions7d:
-          $ref: '#/components/schemas/CohortTransactionResponse'
-        cohortTransactions30d:
-          $ref: '#/components/schemas/CohortTransactionResponse'
-        meta:
-          $ref: '#/components/schemas/DashboardAnalyticsMeta'
-        sectionStatus:
-          $ref: '#/components/schemas/DashboardSectionStatus'
-    ProductRiskSummary:
-      type: object
-      properties:
-        failureRatePct:
-          type: number
-          format: double
-        failedGasFeeNative:
-          type: number
-          format: double
-        worstMethodFailureRatePct:
-          type: number
-          format: double
-        gasSpikeMultiplier:
-          type: number
-          format: double
-        failedGasByMethod:
-          type: array
-          items:
-            $ref: '#/components/schemas/ProductMethodPerformance'
-    ProductMatrixDimension:
-      type: object
-      properties:
-        key:
-          type: string
-        label:
-          type: string
-    ProductSectionStatus:
-      type: object
-      properties:
-        kpis:
-          type: string
-        activity:
-          type: string
-        cohortMethodMatrix:
-          type: string
-        classMethodMatrix:
-          type: string
-        methodPerformance:
-          type: string
-        walletClasses:
-          type: string
-        risk:
-          type: string
-        signals:
-          type: string
-      description: 'Per-section readiness: ready, preparing, syncing or unavailable'
-    ProductMatrixCell:
-      type: object
-      properties:
-        rowKey:
-          type: string
-        columnKey:
-          type: string
-        txCount:
-          type: integer
-          format: int64
-        activeWallets:
-          type: integer
-          format: int64
-        newWallets:
-          type: integer
-          format: int64
-        failedTx:
-          type: integer
-          format: int64
-        failureRatePct:
-          type: number
-          format: double
-        gasFeeNative:
-          type: number
-          format: double
-        failedGasFeeNative:
-          type: number
-          format: double
-    CohortTransactionResponse:
-      type: object
-      properties:
-        timeSeriesData:
-          type: array
-          items:
-            $ref: '#/components/schemas/TimeSeriesEntry'
-        cohortLabels:
-          type: object
-          additionalProperties:
-            type: string
-        metadata:
-          $ref: '#/components/schemas/Metadata'
-    ProductSignal:
-      type: object
-      properties:
-        key:
-          type: string
-        tone:
-          type: string
-        title:
-          type: string
-        value:
-          type: string
-    Metadata:
-      type: object
-      properties:
-        totalPeriods:
-          type: integer
-          format: int32
-        granularity:
-          type: string
-        contractAddress:
-          type: string
-        blockNumber:
-          type: integer
-          format: int64
-    ProductKpi:
-      type: object
-      properties:
-        key:
-          type: string
-        label:
-          type: string
-        value:
-          type: number
-          format: double
-        unit:
-          type: string
-        deltaPct:
-          type: number
-          format: double
-        deltaValue:
-          type: number
-          format: double
-        previousValue:
-          type: number
-          format: double
-        precision:
-          minimum: 0
-          type: integer
-          description: Recommended number of fractional digits for frontend display
-          format: int32
     DashboardAnalyticsMeta:
       type: object
       properties:
@@ -644,6 +468,55 @@ components:
           type: string
         granularity:
           type: string
+    MethodAnalysisResponse:
+      type: object
+      properties:
+        methodUsageCount:
+          type: object
+          additionalProperties:
+            type: integer
+            format: int32
+    Metadata:
+      type: object
+      properties:
+        totalPeriods:
+          type: integer
+          format: int32
+        granularity:
+          type: string
+        contractAddress:
+          type: string
+        blockNumber:
+          type: integer
+          format: int64
+    ProductMatrixCell:
+      type: object
+      properties:
+        rowKey:
+          type: string
+        columnKey:
+          type: string
+        txCount:
+          type: integer
+          format: int64
+        activeWallets:
+          type: integer
+          format: int64
+        newWallets:
+          type: integer
+          format: int64
+        failedTx:
+          type: integer
+          format: int64
+        failureRatePct:
+          type: number
+          format: double
+        gasFeeNative:
+          type: number
+          format: double
+        failedGasFeeNative:
+          type: number
+          format: double
     ProductMethodPerformance:
       type: object
       properties:
@@ -669,24 +542,102 @@ components:
           format: double
         status:
           type: string
-    TimeSeriesEntry:
+    ProductSectionStatus:
       type: object
       properties:
-        date:
+        kpis:
           type: string
-        totalTransactions:
+        activity:
+          type: string
+        cohortMethodMatrix:
+          type: string
+        classMethodMatrix:
+          type: string
+        methodPerformance:
+          type: string
+        walletClasses:
+          type: string
+        risk:
+          type: string
+        signals:
+          type: string
+      description: 'Per-section readiness: ready, preparing, syncing or unavailable'
+    ProductSignal:
+      type: object
+      properties:
+        key:
+          type: string
+        tone:
+          type: string
+        title:
+          type: string
+        value:
+          type: string
+    ProductAnalyticsMeta:
+      type: object
+      properties:
+        contractAddress:
+          type: string
+        chainId:
           type: integer
           format: int32
-        cohortBreakdown:
-          type: object
-          additionalProperties:
-            type: integer
-            format: int32
-        uniqueUsersBreakdown:
-          type: object
-          additionalProperties:
-            type: integer
-            format: int32
+        chain:
+          type: string
+        dateFrom:
+          type: string
+        dateTo:
+          type: string
+        compareDateFrom:
+          type: string
+        compareDateTo:
+          type: string
+        blockFrom:
+          type: integer
+          format: int64
+        blockTo:
+          type: integer
+          format: int64
+        generatedAt:
+          type: string
+          description: UTC time when this dashboard result was calculated
+          format: date-time
+        dataThrough:
+          type:
+          - string
+          - 'null'
+          description: Timestamp of the latest transaction included in the snapshot
+          format: date-time
+        requestId:
+          type:
+          - string
+          - 'null'
+          description: Correlation ID also returned in X-Request-ID
+    ProductRiskSummary:
+      type: object
+      properties:
+        failureRatePct:
+          type: number
+          format: double
+        failedGasFeeNative:
+          type: number
+          format: double
+        worstMethodFailureRatePct:
+          type: number
+          format: double
+        gasSpikeMultiplier:
+          type: number
+          format: double
+        failedGasByMethod:
+          type: array
+          items:
+            $ref: '#/components/schemas/ProductMethodPerformance'
+    CohortAnalysisResponse:
+      type: object
+      properties:
+        cohorts:
+          type: array
+          items:
+            $ref: '#/components/schemas/CohortData'
     TransactionWithCohort:
       type: object
       properties:
@@ -750,40 +701,6 @@ components:
         offsetDaysFromDeploy:
           type: integer
           format: int32
-    ProductMatrix:
-      type: object
-      properties:
-        rows:
-          type: array
-          items:
-            $ref: '#/components/schemas/ProductMatrixDimension'
-        columns:
-          type: array
-          items:
-            $ref: '#/components/schemas/ProductMatrixDimension'
-        cells:
-          type: array
-          items:
-            $ref: '#/components/schemas/ProductMatrixCell'
-    MethodAnalysisResponse:
-      type: object
-      properties:
-        methodUsageCount:
-          type: object
-          additionalProperties:
-            type: integer
-            format: int32
-    TokenAnalysisResponse:
-      type: object
-      properties:
-        name:
-          type: string
-        value:
-          type: string
-        change:
-          type: string
-        amount:
-          type: string
     ProductActivityPoint:
       type: object
       properties:
@@ -807,6 +724,39 @@ components:
         gasFeeNative:
           type: number
           format: double
+    ProductKpi:
+      type: object
+      properties:
+        key:
+          type: string
+        label:
+          type: string
+        value:
+          type: number
+          format: double
+        unit:
+          type: string
+        deltaPct:
+          type: number
+          format: double
+        deltaValue:
+          type: number
+          format: double
+        previousValue:
+          type: number
+          format: double
+        precision:
+          minimum: 0
+          type: integer
+          description: Recommended number of fractional digits for frontend display
+          format: int32
+    ProductMatrixDimension:
+      type: object
+      properties:
+        key:
+          type: string
+        label:
+          type: string
     DashboardSectionStatus:
       type: object
       properties:
@@ -821,6 +771,17 @@ components:
         cohortTransactions30d:
           type: string
       description: 'Per-section readiness: ready, preparing or unavailable'
+    TokenAnalysisResponse:
+      type: object
+      properties:
+        name:
+          type: string
+        value:
+          type: string
+        change:
+          type: string
+        amount:
+          type: string
     ProductAnalyticsDashboardResponse:
       type: object
       properties:
@@ -854,25 +815,47 @@ components:
             $ref: '#/components/schemas/ProductSignal'
         sectionStatus:
           $ref: '#/components/schemas/ProductSectionStatus'
-    CohortData:
+    CohortTransactionResponse:
       type: object
       properties:
-        cohortDate:
+        timeSeriesData:
+          type: array
+          items:
+            $ref: '#/components/schemas/TimeSeriesEntry'
+        cohortLabels:
+          type: object
+          additionalProperties:
+            type: string
+        metadata:
+          $ref: '#/components/schemas/Metadata'
+    ProductWalletClass:
+      type: object
+      properties:
+        className:
           type: string
-          format: date
-        totalUsers:
+        activeWallets:
           type: integer
-          format: int32
-        amountOfTx:
-          type: object
-          additionalProperties:
-            type: integer
-            format: int32
-        retentionRates:
-          type: object
-          additionalProperties:
-            type: number
-            format: double
+          format: int64
+        sharePct:
+          type: number
+          format: double
+        color:
+          type: string
+    ProductMatrix:
+      type: object
+      properties:
+        rows:
+          type: array
+          items:
+            $ref: '#/components/schemas/ProductMatrixDimension'
+        columns:
+          type: array
+          items:
+            $ref: '#/components/schemas/ProductMatrixDimension'
+        cells:
+          type: array
+          items:
+            $ref: '#/components/schemas/ProductMatrixCell'
     ProductMetricsResponse:
       type: object
       properties:
@@ -911,45 +894,62 @@ components:
           additionalProperties:
             type: integer
             format: int64
-    ProductAnalyticsMeta:
+    TimeSeriesEntry:
+      type: object
+      properties:
+        date:
+          type: string
+        totalTransactions:
+          type: integer
+          format: int32
+        cohortBreakdown:
+          type: object
+          additionalProperties:
+            type: integer
+            format: int32
+        uniqueUsersBreakdown:
+          type: object
+          additionalProperties:
+            type: integer
+            format: int32
+    CohortData:
+      type: object
+      properties:
+        cohortDate:
+          type: string
+          format: date
+        totalUsers:
+          type: integer
+          format: int32
+        amountOfTx:
+          type: object
+          additionalProperties:
+            type: integer
+            format: int32
+        retentionRates:
+          type: object
+          additionalProperties:
+            type: number
+            format: double
+    DashboardAnalyticsResponse:
       type: object
       properties:
         contractAddress:
           type: string
-        chainId:
-          type: integer
-          format: int32
-        chain:
-          type: string
-        dateFrom:
-          type: string
-        dateTo:
-          type: string
-        compareDateFrom:
-          type: string
-        compareDateTo:
-          type: string
-        blockFrom:
-          type: integer
-          format: int64
-        blockTo:
-          type: integer
-          format: int64
-        generatedAt:
-          type: string
-          description: UTC time when this dashboard result was calculated
-          format: date-time
-        dataThrough:
-          type:
-          - string
-          - 'null'
-          description: Timestamp of the latest transaction included in the snapshot
-          format: date-time
-        requestId:
-          type:
-          - string
-          - 'null'
-          description: Correlation ID also returned in X-Request-ID
+        metrics:
+          $ref: '#/components/schemas/ProductMetricsResponse'
+        methods:
+          $ref: '#/components/schemas/MethodAnalysisResponse'
+        cohortsWeekly:
+          $ref: '#/components/schemas/CohortAnalysisResponse'
+        cohortTransactions7d:
+          $ref: '#/components/schemas/CohortTransactionResponse'
+        cohortTransactions30d:
+          $ref: '#/components/schemas/CohortTransactionResponse'
+        meta:
+          $ref: '#/components/schemas/DashboardAnalyticsMeta'
+        sectionStatus:
+          $ref: '#/components/schemas/DashboardSectionStatus'
   securitySchemes:
     bearerAuth:
       type: http

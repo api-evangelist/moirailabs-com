@@ -171,6 +171,63 @@ paths:
       x-summary-source: derived
 components:
   schemas:
+    WalletProfilingClassResponse:
+      type: object
+      properties:
+        className:
+          type: string
+        confidence:
+          type: number
+          format: double
+        scores:
+          type: object
+          additionalProperties:
+            type: object
+        explanation:
+          type: object
+          additionalProperties:
+            type: object
+    WalletProfilingQuotaResponse:
+      type: object
+      properties:
+        limit:
+          type: integer
+          format: int32
+        reserved:
+          type: integer
+          format: int32
+        used:
+          type: integer
+          format: int32
+        remaining:
+          type: integer
+          format: int32
+        periodStart:
+          type: string
+          format: date-time
+        periodEnd:
+          type: string
+          format: date-time
+    WalletProfilingQualityResponse:
+      type: object
+      properties:
+        classificationMode:
+          type: string
+        enrichedDataUsed:
+          type: boolean
+        dataPreparationRequired:
+          type: boolean
+    WalletProfilingSimpleRequest:
+      required:
+      - chainId
+      - walletAddress
+      type: object
+      properties:
+        walletAddress:
+          type: string
+        chainId:
+          type: integer
+          format: int32
     WalletProfilingResponse:
       type: object
       properties:
@@ -202,25 +259,26 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/WalletProfilingClassResponse'
-    WalletProfilingQuotaResponse:
+    WalletProfilingBillingResponse:
+      type: object
+      properties:
+        productUnits:
+          type: integer
+          format: int32
+        productPricingUnit:
+          type: string
+        chargeStatus:
+          type: string
+    WalletProfilingRateLimitResponse:
       type: object
       properties:
         limit:
           type: integer
           format: int32
-        reserved:
-          type: integer
-          format: int32
-        used:
-          type: integer
-          format: int32
         remaining:
           type: integer
           format: int32
-        periodStart:
-          type: string
-          format: date-time
-        periodEnd:
+        resetAt:
           type: string
           format: date-time
     WalletProfilingEnrichedRequest:
@@ -235,64 +293,6 @@ components:
           type: integer
           format: int32
         forceRefresh:
-          type: boolean
-    WalletProfilingBillingResponse:
-      type: object
-      properties:
-        productUnits:
-          type: integer
-          format: int32
-        productPricingUnit:
-          type: string
-        chargeStatus:
-          type: string
-    WalletProfilingClassResponse:
-      type: object
-      properties:
-        className:
-          type: string
-        confidence:
-          type: number
-          format: double
-        scores:
-          type: object
-          additionalProperties:
-            type: object
-        explanation:
-          type: object
-          additionalProperties:
-            type: object
-    WalletProfilingSimpleRequest:
-      required:
-      - chainId
-      - walletAddress
-      type: object
-      properties:
-        walletAddress:
-          type: string
-        chainId:
-          type: integer
-          format: int32
-    WalletProfilingRateLimitResponse:
-      type: object
-      properties:
-        limit:
-          type: integer
-          format: int32
-        remaining:
-          type: integer
-          format: int32
-        resetAt:
-          type: string
-          format: date-time
-    WalletProfilingQualityResponse:
-      type: object
-      properties:
-        classificationMode:
-          type: string
-        enrichedDataUsed:
-          type: boolean
-        dataPreparationRequired:
           type: boolean
   securitySchemes:
     bearerAuth:
