@@ -64,5 +64,134 @@
 > Full detail: **[Where this data comes from](https://apievangelist.com/about/where-our-data-comes-from)**
 <!-- API-EVANGELIST-PROVENANCE:END -->
 
-Moirai Labs is a company surfaced via the API Evangelist harvest backlog (source: a2a-registry) and added to the network as a stub for full-pipeline profiling.
-- https://moirailabs.com/
+Moirai Labs is a smart-contract analytics platform for Web3 teams that turns raw EVM chain data (Ethereum, Polygon, Arbitrum, Optimism, Base, Linea) into product-grade metrics: cohort retention, method-level call breakdowns, daily reports, product dashboards and wallet profiling. The same credit-metered core is exposed three ways — a bearer-JWT REST API described by an OpenAPI 3.0.1 document with 36 operations (including durable, idempotent asynchronous analytics invocations), an A2A 1.0 agent ("Moirai Agents API", 11 skills, registered in the A2A Registry) and an MCP bridge on the agent host — alongside an OpenAI ai-plugin.json manifest, llms.txt and an RFC 9116 security.txt. Subscription plans meter contracts under analysis per 30-day period; the plan catalog is served anonymously by the API.
+
+**Areas:** Company · Blockchain · Smart Contracts · Web3 · Analytics · cohort-analysis · Wallet Profiling · Ethereum · AI Agents · A2A · MCP · Agent-Native
+
+## Moirai Labs on APIs.io
+
+Everything profiled for Moirai Labs is published on APIs.io rather than in this repository. Start at the provider page — **[apis.io/providers/moirailabs-com/](https://apis.io/providers/moirailabs-com/)** — or go straight to one of the APIs or properties below.
+
+### APIs (10)
+
+- [Moirai Agents API (A2A + MCP)](https://apis.io/apis/moirailabs-com/moirai-agents-api/) — A2A 1.0 agent ("A2A-compatible analytics and contract intelligence agent", version 0.1.0) with 11 skills —…
+- [Moirai Labs Analytics Controller API](https://apis.io/apis/moirailabs-com/moirailabs-com-analytics-controller-api/) — The analytics-controller API from Moirai Labs — 7 operation(s) for analytics-controller.
+- [Moirai Labs Analytics Invocation Controller API](https://apis.io/apis/moirailabs-com/moirailabs-com-analytics-invocation-controller-api/) — The analytics-invocation-controller API from Moirai Labs — 4 operation(s) for analytics-invocation-controller.
+- [Moirai Labs Contract Info Controller API](https://apis.io/apis/moirailabs-com/moirailabs-com-contract-info-controller-api/) — The contract-info-controller API from Moirai Labs — 6 operation(s) for contract-info-controller.
+- [Moirai Labs Functions Controller API](https://apis.io/apis/moirailabs-com/moirailabs-com-functions-controller-api/) — The functions-controller API from Moirai Labs — 1 operation(s) for functions-controller.
+- [Moirai Labs Plan Controller API](https://apis.io/apis/moirailabs-com/moirailabs-com-plan-controller-api/) — The plan-controller API from Moirai Labs — 3 operation(s) for plan-controller.
+- [Moirai Labs Report Controller API](https://apis.io/apis/moirailabs-com/moirailabs-com-report-controller-api/) — The report-controller API from Moirai Labs — 1 operation(s) for report-controller.
+- [Moirai Labs Subscription Controller API](https://apis.io/apis/moirailabs-com/moirailabs-com-subscription-controller-api/) — The subscription-controller API from Moirai Labs — 2 operation(s) for subscription-controller.
+- [Moirai Labs User Info Controller API](https://apis.io/apis/moirailabs-com/moirailabs-com-user-info-controller-api/) — The user-info-controller API from Moirai Labs — 3 operation(s) for user-info-controller.
+- [Moirai Labs Wallet Profiling Controller API](https://apis.io/apis/moirailabs-com/moirailabs-com-wallet-profiling-controller-api/) — The wallet-profiling-controller API from Moirai Labs — 4 operation(s) for wallet-profiling-controller.
+
+### Published properties
+
+Each property below is a page on APIs.io carrying the machine-readable artifact and what it says.
+
+#### MCP servers (1)
+
+Model Context Protocol servers that expose the API to agents.
+
+- [moirailabs-com-mcp.yml](https://apis.io/servers/moirailabs-com/moirailabs-com-mcp-yml/)
+
+#### Agentic access (1)
+
+Which operations an agent can call, which act, and which need a human in the loop.
+
+- [Moirailabs Com Agentic Access](https://apis.io/agentic-access/moirailabs-com/moirailabs-com-agentic-access/)
+
+#### Overlays (1)
+
+OpenAPI overlays, including conversational phrasing for each operation.
+
+- [Moirailabs Com Openapi Overlay](https://apis.io/overlays/moirailabs-com/moirailabs-com-openapi-overlay/)
+
+#### Security (3)
+
+Authentication, trust centre, and vulnerability disclosure.
+
+- [Moirailabs Com Authentication](https://apis.io/security/moirailabs-com/moirailabs-com-authentication/)
+- [Moirailabs Com Domain Security](https://apis.io/security/moirailabs-com/moirailabs-com-domain-security/)
+- [Moirailabs Com Vulnerability Disclosure](https://apis.io/security/moirailabs-com/moirailabs-com-vulnerability-disclosure/)
+
+#### Plans and pricing (1)
+
+Published plans, tiers and prices.
+
+- [Moirailabs Com Plans Pricing](https://apis.io/plans/moirailabs-com/moirailabs-com-plans-pricing/)
+
+#### Rate limits (1)
+
+Published request limits.
+
+- [Moirailabs Com Rate Limits](https://apis.io/rate-limits/moirailabs-com/moirailabs-com-rate-limits/)
+
+## Where to find this API
+
+Links to the company's own pages. This repository publishes no copy of their specifications — the canonical document is theirs and lives at the URLs below.
+
+- [Website](https://moirailabs.com/)
+- [Documentation](https://moirailabs.com/a2a)
+- [Pricing](https://moirailabs.com/pricing)
+- [Sign up](https://moirailabs.com/auth)
+- [Support](https://moirailabs.featurebase.app/en/help)
+- [Blog](https://moirailabs.com/blog)
+- [Terms of service](https://moirailabs.com/terms)
+- [Privacy policy](https://moirailabs.com/privacy)
+- [GitHub](https://github.com/moirailabs)
+
+## API Evangelist rating
+
+**Kin Score 49.5** — developing · rubric 0.25.0 · scored 2026-10-23
+
+| Facet | Score |
+|---|---|
+| Discoverability | 75.0 |
+| Contract quality | 48.9 |
+| Contract governance | 4.5 |
+| Operational transparency | 52.6 |
+| Developer ergonomics | 30.4 |
+| Access clarity | 76.3 |
+
+**Agent readiness 49.6** — agent-native
+
+| Agent-readiness dimension | Result |
+|---|---|
+| Spec Presence | yes |
+| Agentic Access | derived (partial credit) |
+| Reversibility Documented | documented (partial credit) |
+| MCP Server | documented (partial credit) |
+| Auth Clarity | bearer (partial credit) |
+| Idempotency | verified |
+| Error Semantics | verified |
+| OpenAPI Examples | verified |
+| Rate Limit Signal | verified |
+| Event Surface Described | — |
+| Agent Skills | derived (partial credit) |
+| Well Known Catalog | — |
+| Consent Identity | — |
+| Agent Card | conformant |
+| Dry Run Mode | — |
+| Delegated Identity | — |
+| Protected Resource Metadata | — |
+| Dynamic Client Registration | — |
+| Agentic Commerce | — |
+| Pagination Ratio | — |
+| Operation Distinctiveness | mostly |
+
+**Regulatory alignment 31.3** — Payments
+
+The rubric is published at [github.com/api-evangelist/kin-score](https://github.com/api-evangelist/kin-score). The per-check breakdown behind these numbers — which checks were earned, partial or missed — along with score history and how this provider compares to its peers, is available at [apis.io/providers/moirailabs-com/](https://apis.io/providers/moirailabs-com/).
+
+## How this profile is made
+
+API Evangelist profiles a company's public API surface the way a developer would find it: the website, developer portal and documentation, the specifications it publishes, its public repositories, and its pricing, status and changelog pages. From that it derives the properties above — contracts split per API, workflows, schemas, collections, governance rules, plans and rate limits — and scores them against the published [Kin Score rubric](https://github.com/api-evangelist/kin-score).
+
+The artifacts are published on [APIs.io](https://apis.io), not in this repository. This repository is the public record for Moirai Labs: the place to say something is wrong, missing or out of date, and to ask for a re-score or a removal.
+
+## Open an issue
+
+- **Something about this listing** — a wrong description, a missing API, a stale artifact or a question about the rating: [open an issue on this repository](https://github.com/api-evangelist/moirailabs-com/issues/new).
+- **A new API, or one that is not in the catalog yet** — [submit it on APIs.io](https://apis.io/add/).
+- **Anything else** — [the APIs.io inbox](https://github.com/api-search/inbox/issues/new) or [info@apievangelist.com](mailto:info@apievangelist.com).
